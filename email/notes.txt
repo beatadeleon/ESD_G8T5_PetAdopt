@@ -1,0 +1,5 @@
+Shortlist (one-by-one or batch?)
+1. One-by-one: Shortlist button in each adoption request
+2. Batch: Add request (multi-select checkbox). Have a header at the top to send Shortlist. 
+Or have a KIV checkbox list to save for staff to review.
+
