@@ -5,14 +5,10 @@ from pika.exceptions import AMQPConnectionError
 import sys
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 exchangename = "test_email" # exchange name
 exchangetype = "topic" # use a 'topic' exchange to enable interaction
-
-# Instead of hardcoding the values, we can also get them from the environ as shown below
-# exchangename = environ.get('exchangename') #order_topic
-# exchangetype = environ.get('exchangetype') #topic 
 
 # Create a connection and a channel to the broker to publish messages to activity_log, error queues
 try:
@@ -26,65 +22,56 @@ except AMQPConnectionError as e:
     
 @app.route('/confirm', methods=['POST'])
 def confirm():
-    data = request.get_json()
-    email = data['email']
+    email = request.get_json()['email']
     subject = 'Confirmation of adoption request'
-    message = data['message']
+    message = f"Hi ${email}. This email is to confirm your adoption request"
     body = f"{subject}, {email}, {message}"
-    
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.confirm', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "Got the confirm message", data
+        return "{'status': 201, 'msg': 'CONFIRM NOTIFICATION SENT SUCCESSFULLY'}"
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
     
-    
 @app.route('/shortlist', methods=['POST'])
 def shortlist():
-    data = request.get_json()
-    email = data['email']
-    subject = 'Adoption request next steps'
-    message = data['message']
+    email = request.get_json()['email']
+    subject = "You're shortlisted!"
+    message = f"Hi ${email}. You're shortlisted to visit Pet XXXX. Please book an appointment for us to assess your suitability"
     body = f"{subject}, {email}, {message}"
-    
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.shortlist', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "Got the shortlist message", data
+        return "{'status': 201, 'msg': 'SHORTLIST NOTIFICATION SENT SUCCESSFULLY'}"
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
     
 @app.route('/accept', methods=['POST'])
 def accept():
-    data = request.get_json()
-    email = data['email']
+    email = request.get_json()['email']
     subject = "Good news! You're accepted!"
-    message = data['message']
+    message = f"Hi ${email}. Your application is successful. Please come down to pick up Pet XXXX"
     body = f"{subject}, {email}, {message}"
-    
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.accept', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "Got the accept message", data
+        return "{'status': 201, 'msg': 'ACCEPT NOTIFICATION SENT SUCCESSFULLY'}"
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
 
 @app.route('/reject', methods=['POST'])
 def reject():
-    data = request.get_json()
-    email = data['email']
+    email = request.get_json()['email']
     subject = "Adoption request update"
-    message = data['message']
+    message = f"Hi ${email}. Your application is unsuccessful. Thanks for your interest and you may apply for more pets"
     body = f"{subject}, {email}, {message}"
-    
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.reject', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "Got the reject message", data
+        return "{'status': 201, 'msg': 'REJECT NOTIFICATION SENT SUCCESSFULLY'}"
     except AMQPConnectionError as e:
         return "Failed to publish reject message due to connection error", str(e)
-    
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5100, debug=True)
