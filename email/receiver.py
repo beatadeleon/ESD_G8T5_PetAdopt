@@ -6,13 +6,11 @@ import pika
 from test_email import send_email
 
 
-c_queue_name = 'confirm' # queue to be subscribed by Activity_Log microservice
-s_queue_name = 'shortlist' # queue to be subscribed by Activity_Log microservice
-a_queue_name = 'accept' # queue to be subscribed by Activity_Log microservice
-r_queue_name = 'reject' # queue to be subscribed by Activity_Log microservice
+c_queue_name = 'confirm'
+s_queue_name = 'shortlist'
+a_queue_name = 'accept'
+r_queue_name = 'reject'
 
-# Instead of hardcoding the values, we can also get them from the environ as shown below
-# a_queue_name = environ.get('Activity_Log') #Activity_Log
 
 def receiveOrderLog(channel):
     try:
