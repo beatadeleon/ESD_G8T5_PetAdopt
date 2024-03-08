@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body id="app">
+    <!-- Email will be retrieved from firebase auth -->
     Email address: <input type="text" v-model="email" required>
     <button @click="notify('confirm')">Confirm</button>
     <button @click="notify('shortlist')">Shortlist</button>

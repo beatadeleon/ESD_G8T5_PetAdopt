@@ -3,3 +3,6 @@ Shortlist (one-by-one or batch?)
 2. Batch: Add request (multi-select checkbox). Have a header at the top to send Shortlist. 
 Or have a KIV checkbox list to save for staff to review.
 
+How to run:
+1. Run amqp connection -> amqp_setup -> sender.py -> receiver.py
+
