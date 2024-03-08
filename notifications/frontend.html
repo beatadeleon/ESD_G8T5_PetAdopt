@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email UI</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body id="app">
+    Email address: <input type="text" v-model="email" required>
+    <button @click="notify('confirm')">Confirm</button>
+    <button @click="notify('shortlist')">Shortlist</button>
+    <button @click="notify('accept')">Accept</button>
+    <button @click="notify('reject')">Reject</button>
+
+
+<script src="frontend.js"></script>
+</body>
+</html>
