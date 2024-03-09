@@ -4,8 +4,9 @@ import Login from '../auth/login.vue';
 import RegisterComponent from '../auth/register.vue';
 import Home from '../home.vue'
 import AdminDashboardComponent from '../adminDashboard.vue';
-import UserDashboardComponent from '../userDashboard.vue'
-import { ref, get } from 'firebase/database'
+import UserDashboardComponent from '../userDashboard.vue';
+import ApplicationFormComponent from '../applicationForm.vue';
+import { ref, get } from 'firebase/database';
 
 
 
@@ -42,12 +43,17 @@ const routes = [
     {
         path: '/userDashboard',
         name: 'UserDashboard',
-        component: UserDashboardComponent, // Replace AdminDashboardComponent with the actual component for the admin dashboard
+        component: UserDashboardComponent, 
         meta: {
           requiresAuth: true, // You can set meta fields if authentication is required for the admin dashboard
           requiredRole: 'user', // You can specify the required role for accessing the admin dashboard
         },
-    }
+    },
+    {
+      path: '/applicationForm',
+      name: 'ApplicationForm',
+      component: ApplicationFormComponent,
+    },
   
 ]
 
