@@ -2,14 +2,20 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import firebase_admin
 from firebase_admin import credentials, db
+from dotenv import load_dotenv
 import os
+
+
 
 app = Flask(__name__)
 CORS(app)
 
-# CHANGE TO PUT IN .ENV FILE
-databaseURL = "https://petadopt-e0fe8-default-rtdb.asia-southeast1.firebasedatabase.app/"
-service_account_path = "../petadopt-e0fe8-firebase-adminsdk-l81sh-f8914d3037.json"
+
+# Load environment variables
+load_dotenv()
+
+databaseURL = os.getenv('DATABASE_URL')
+service_account_path = os.getenv('SERVICE_ACCOUNT_PATH')
 
 cred_obj = firebase_admin.credentials.Certificate(service_account_path)
 default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL': databaseURL})
