@@ -26,17 +26,34 @@ root_ref = db.reference()
 @app.route('/submit_application', methods=['POST'])
 def submit_application():
     data = request.json
+
+    if data is None:
+        return jsonify({'error': 'Invalid request data.'}), 400
+
+    try:
+        userId = data['userId']
+        name = data['name']
+        email = data['email']
+        phone = data['phone']
+        message = data['message']
+        pet = data['pet']
+    except KeyError as e:
+        return jsonify({'error': f'Missing required field: {e.args[0]}'}), 400
+    except TypeError:
+        return jsonify({'error': 'Invalid request data format.'}), 400
+
     adoption_request_ref = root_ref.child('adoptionRequests')
     new_request_ref = adoption_request_ref.push()
     new_request_ref.set({
         'requestId': new_request_ref.key,
-        'userId': data['userId'],
-        'name': data['name'],
-        'email': data['email'],
-        'phone': data['phone'],
-        'message': data['message'],
-        'pet': data['pet']
+        'userId': userId,
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'message': message,
+        'pet': pet
     })
+
     return jsonify({'message': 'Application submitted successfully!'})
 
 
