@@ -62,13 +62,15 @@
   });
   
 
- // Define the submitApplication method
+ // Define the submitApplication method and call adoption service
 const submitApplication = async () => {
   const user = auth.currentUser;
   if (user) {
     const adoptionRequestRef = dbRef(db, 'adoptionRequests');
     const newRequestRef = push(adoptionRequestRef);
-    await set(newRequestRef, {
+    
+    // Prepare the data to be sent to the Flask server
+    const requestData = {
       requestId: newRequestRef.key,
       userId: user.uid,
       name: formData.value.name,
@@ -76,16 +78,30 @@ const submitApplication = async () => {
       phone: formData.value.phone,
       message: formData.value.message,
       pet: formData.value.pet
-    });
-    // Reset form data after submission
-    formData.value = {
-      name: '',
-      email: '',
-      phone: '',
-      message: '',
-      pet: ''
     };
-    console.log('Application submitted successfully!');
+    
+    // Make an HTTP POST request to the Flask server
+    const response = await fetch('http://localhost:5000/submit_application', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    });
+
+    if (response.ok) {
+      // Reset form data after submission
+      formData.value = {
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+        pet: ''
+      };
+      console.log('Application submitted successfully!');
+    } else {
+      console.error('Failed to submit application:', response.statusText);
+    }
   } else {
     console.log('User not logged in.');
   }
