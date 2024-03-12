@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Include the Calendly JavaScript file -->
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+</head>
+<body>
+
+    <h1>Book Meeting</dh1>
+
+    <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
+
+    <!-- Use the API call to initialize the inline widget -->
+    <script>
+        Calendly.initInlineWidget({
+            url: 'https://calendly.com/chooyining-sg/adoption-suitability-assesment', // Replace with your Calendly link
+            parentElement: document.getElementById('calendly-embed'), // Specify the div ID
+            prefill: {}, // You can add pre-fill data here if needed
+            utm: {}
+        });
+
+        function isCalendlyEvent(e) {
+            return e.origin === "https://calendly.com" && e.data.event && e.data.event.indexOf("calendly.") === 0;
+        }
+
+        window.addEventListener("message", async function(e) {
+            if (isCalendlyEvent(e)) {
+                try {
+                    /* Log the name of the event */
+                    console.log("Event name:", e.data.event);
+
+                    /* Log the payload details of the event */
+                    console.log("Event details:", e.data.payload);
+                } catch (error) {
+                    console.error("Error handling Calendly event:", error);
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>

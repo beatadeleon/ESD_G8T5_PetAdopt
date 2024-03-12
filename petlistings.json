@@ -1,0 +1,45 @@
+{
+    "petListings": {
+      "listing1": {
+        "name": "Fluffy",
+        "type": "Cat",
+        "age": 2,
+        "gender": "Female",
+        "breed": "Persian",
+        "description": "Fluffy is a playful and affectionate Persian cat looking for a loving home.",
+        "image": "https://static1.squarespace.com/static/5e8a2944d7ce562e250eb009/5e8a2e9094f18a06526980ee/6228805d98808224f2c60beb/1660123630798/sergey-semin-6TiFuD_1q4o-unsplash.jpg?format=1500w",
+        "applicants": 0
+      },
+      "listing2": {
+        "name": "Buddy",
+        "type": "Dog",
+        "age": 3,
+        "gender": "Male",
+        "breed": "Golden Retriever",
+        "description": "Buddy is a friendly and energetic Golden Retriever who loves to play fetch.",
+        "image": "https://images.squarespace-cdn.com/content/v1/54e7a1a6e4b08db9da801ded/fdecc7f0-42bf-4696-bd4c-73a868e5d1d2/81.jpg",
+        "applicants": 0
+      },
+      "listing3": {
+        "name": "Whiskers",
+        "type": "Cat",
+        "age": 1,
+        "gender": "Male",
+        "breed": "Siamese",
+        "description": "Whiskers is a curious and vocal Siamese cat looking for a home with lots of toys.",
+        "image": "https://assets.elanco.com/8e0bf1c2-1ae4-001f-9257-f2be3c683fb1/fca42f04-2474-4302-a238-990c8aebfe8c/Siamese_cat_1110x740.jpg",
+        "applicants": 0
+      },
+      "listing4": {
+        "name": "Rocky",
+        "type": "Dog",
+        "age": 4,
+        "gender": "Male",
+        "breed": "German Shepherd",
+        "description": "Rocky is a loyal and protective German Shepherd who enjoys long walks.",
+        "image": "https://d.newsweek.com/en/full/2201052/dog.jpg?w=1600&h=1200&q=88&f=56687919043018e29fc48209d009e5ca",
+        "applicants": 0
+      }
+    }
+  }
+  
