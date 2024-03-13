@@ -37,6 +37,7 @@ def submit_application():
         phone = data['phone']
         message = data['message']
         pet = data['pet']
+
     except KeyError as e:
         return jsonify({'error': f'Missing required field: {e.args[0]}'}), 400
     except TypeError:
@@ -51,28 +52,29 @@ def submit_application():
         'email': email,
         'phone': phone,
         'message': message,
-        'pet': pet
+        'pet': pet,
+        'status': 'pending'
     })
 
     return jsonify({'message': 'Application submitted successfully!'})
 
 
 @app.route("/adoptionRequests/open")
-def get_all_open_applications():
+def get_all_pending_applications():
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
     if applications:
-        open_applications = [application for application in applications.values() if application.get('status') == 'open']
-        if open_applications:
+        pending_applications = [application for application in applications.values() if application.get('status') == 'pending']
+        if pending_applications:
             return jsonify({
                 "code": 200,
-                "data": open_applications
+                "data": pending_applications
             })
         else:
             return jsonify({
                 "code": 404,
-                "message": "There are no open applications."
+                "message": "There are no pending applications."
             }), 404
     else:
         return jsonify({
