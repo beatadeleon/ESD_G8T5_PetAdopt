@@ -41,6 +41,7 @@ def get_all_listings():
             "message": "There are no listings."
         }), 404
 
+# id is listing1,listing2 etc.
 @app.route("/petListings/<string:id>")
 def find_listing_by_id(id):
     listing_ref = root_ref.child(f'petListings/{id}')
