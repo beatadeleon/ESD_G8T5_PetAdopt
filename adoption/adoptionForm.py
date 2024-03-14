@@ -81,6 +81,93 @@ def get_all_open_applications():
             "code": 404,
             "message": "There are no applications."
         }), 404
+    
+@app.route("/adoptionRequests/pending")
+def get_all_pending_applications():
+    application_ref = root_ref.child('adoptionRequests')
+    applications = application_ref.get()
+
+    if applications:
+        pending_applications = [application for application in applications.values() if application.get('status') == 'pending']
+        if pending_applications:
+            return jsonify({
+                "code": 200,
+                "data": pending_applications
+            })
+        else:
+            return jsonify({
+                "code": 404,
+                "message": "There are no pending applications."
+            }), 404
+    else:
+        return jsonify({
+            "code": 404,
+            "message": "There are no applications."
+        }), 404
+    
+@app.route("/adoptionRequests/confirmed")
+def get_all_confirmed_applications():
+    application_ref = root_ref.child('adoptionRequests')
+    applications = application_ref.get()
+
+    if applications:
+        confirmed_applications = [application for application in applications.values() if application.get('status') == 'confirmed']
+        if confirmed_applications:
+            return jsonify({
+                "code": 200,
+                "data": confirmed_applications
+            })
+        else:
+            return jsonify({
+                "code": 404,
+                "message": "There are no confirmed applications."
+            }), 404
+    else:
+        return jsonify({
+            "code": 404,
+            "message": "There are no applications."
+        }), 404
+    
+@app.route("/adoptionRequests/rejected")
+def get_all_rejected_applications():
+    application_ref = root_ref.child('adoptionRequests')
+    applications = application_ref.get()
+
+    if applications:
+        rejected_applications = [application for application in applications.values() if application.get('status') == 'rejected']
+        if rejected_applications:
+            return jsonify({
+                "code": 200,
+                "data": rejected_applications
+            })
+        else:
+            return jsonify({
+                "code": 404,
+                "message": "There are no rejected applications."
+            }), 404
+    else:
+        return jsonify({
+            "code": 404,
+            "message": "There are no applications."
+        }), 404
+
+
+@app.route("/adoptionRequests/<string:id>", methods=['PUT'])
+def update_application_status(id):
+    data = request.json
+
+    if 'status' not in data:
+        return jsonify({'error': 'Missing status field.'}), 400
+
+    status = data['status']
+    application_ref = root_ref.child(f'adoptionRequests/{id}')
+
+    if application_ref.get():
+        application_ref.update({'status': status})
+        return jsonify({'message': f'Status updated to {status}.'})
+    else:
+        return jsonify({'error': 'Application not found.'}), 404
+
 
 
 @app.route("/adoptionRequests/<string:id>")

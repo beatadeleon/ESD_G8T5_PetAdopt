@@ -1,8 +1,3 @@
-<script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
-</script>
-
 <template>
   <div>
     <h1>All Applications</h1>
@@ -14,64 +9,78 @@ const router = useRouter()
     </div>
     <h2>{{ filteredStatus }}</h2>
     <div class="card-container">
-      <div v-for="application in filteredApplications" :key="application.requestId" class="card">
-        <h2>{{ application.name }}</h2>
-        <p><strong>Email:</strong> {{ application.email }}</p>
-        <p><strong>Phone:</strong> {{ application.phone }}</p>
-        <p><strong>Pet:</strong> {{ application.pet }}</p>
-        <p><strong>Message:</strong> {{ application.message }}</p>
-        <button @click="updateStatus(application, 'pending')">Update Status</button>
-      </div>
-    </div>
+  <div v-for="application in filteredApplications" :key="application.requestId" class="card">
+    <h2>{{ application.name }}</h2>
+    <p><strong>Email:</strong> {{ application.email }}</p>
+    <p><strong>Phone:</strong> {{ application.phone }}</p>
+    <p><strong>Pet:</strong> {{ application.pet }}</p>
+    <p><strong>Message:</strong> {{ application.message }}</p>
+    <button v-if="application.status === 'open'" @click="updateStatus(application, 'pending')">Move to Pending</button>
+    <button v-if="application.status === 'pending'" @click="updateStatus(application, 'confirmed')">Confirm</button>
+    <button v-if="application.status === 'pending'" @click="updateStatus(application, 'rejected')">Reject</button>
   </div>
+</div>
+</div>
+
 </template>
 
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 
-<script>
-export default {
-  name: 'AdminDashboardComponent',
-  data() {
-    return {
-      applications: [],
-      filteredApplications: [],
-      filteredStatus: 'All Applications',
-    };
-  },
-  mounted() {
-    this.fetchOpenApplications();
-  },
-  methods: {
-    async fetchOpenApplications() {
-      try {
-        const response = await fetch('http://localhost:5110/adoptionRequests/open');
-        if (!response.ok) {
-          throw new Error('Failed to fetch open applications');
-        }
-        const data = await response.json();
-        this.applications = data.data;
-        this.filteredApplications = this.applications;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    filterApplications(status) {
-      if (status === 'all') {
-        this.filteredApplications = this.applications;
-        this.filteredStatus = 'All Applications';
-      } else {
-        this.filteredApplications = this.applications.filter(application => application.status === status);
-        this.filteredStatus = status.charAt(0).toUpperCase() + status.slice(1);
-      }
-    },
-    async updateStatus(application, status) {
-      // Code to update application status
-      console.log(`Updating status of application ${application.requestId} to ${status}`);
+const applications = ref([]);
+const filteredApplications = ref([]);
+const filteredStatus = ref('');
+
+const fetchApplications = async (status) => {
+  try {
+    const response = await fetch(`http://localhost:5110/adoptionRequests/${status}`);
+    if (response.ok) {
+      const data = await response.json();
+      applications.value = data.data || [];
+      filteredApplications.value = applications.value;
+      filteredStatus.value = status.charAt(0).toUpperCase() + status.slice(1);
+    } else if (response.status === 404) {
+      applications.value = [];
+      filteredApplications.value = applications.value;
+      filteredStatus.value = status.charAt(0).toUpperCase() + status.slice(1);
+    } else {
+      console.error('Failed to fetch applications:', response.statusText);
     }
-  },
+  } catch (error) {
+    console.error('Failed to fetch applications:', error);
+  }
+};
+
+
+
+const filterApplications = (status) => {
+  fetchApplications(status);
+};
+
+const updateStatus = async (application, status) => {
+  try {
+    const response = await fetch(`http://localhost:5110/adoptionRequests/${application.requestId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status })
+    });
+
+    if (response.ok) {
+      console.log(`Successfully updated status of application ${application.requestId} to ${status}`);
+      application.status = status;
+    } else {
+      console.error('Failed to update status:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Failed to update status:', error);
+  }
 };
 </script>
-
 
 <style scoped>
 .card-container {
