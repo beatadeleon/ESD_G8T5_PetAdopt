@@ -53,28 +53,28 @@ def submit_application():
         'phone': phone,
         'message': message,
         'pet': pet,
-        'status': 'pending'
+        'status': 'open'
     })
 
     return jsonify({'message': 'Application submitted successfully!'})
 
 
 @app.route("/adoptionRequests/open")
-def get_all_pending_applications():
+def get_all_open_applications():
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
     if applications:
-        pending_applications = [application for application in applications.values() if application.get('status') == 'pending']
-        if pending_applications:
+        open_applications = [application for application in applications.values() if application.get('status') == 'open']
+        if open_applications:
             return jsonify({
                 "code": 200,
-                "data": pending_applications
+                "data": open_applications
             })
         else:
             return jsonify({
                 "code": 404,
-                "message": "There are no pending applications."
+                "message": "There are no open applications."
             }), 404
     else:
         return jsonify({
