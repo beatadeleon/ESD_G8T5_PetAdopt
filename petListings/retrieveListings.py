@@ -59,7 +59,7 @@ def find_listing_by_id(id):
         }), 404
 
 # update the applicant number
-@app.route("petListings/<string:id>/applicants", methods=['PUT'])
+@app.route("/petListings/<string:id>/applicants", methods=['PUT'])
 def update_applicants(action):
     if action == 'add':
         pass
