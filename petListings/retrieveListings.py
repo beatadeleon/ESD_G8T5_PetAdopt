@@ -58,5 +58,12 @@ def find_listing_by_id(id):
             "message": "Listing not found."
         }), 404
 
+# update the applicant number
+@app.route("petListings/<string:id>/applicants", methods=['PUT'])
+def update_applicants(action):
+    if action == 'add':
+        pass
+    else:
+        pass
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8082, debug=True)
