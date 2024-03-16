@@ -81,7 +81,7 @@ const submitApplication = async () => {
     };
     
     // Make an HTTP POST request to the Flask server
-    const response = await fetch('http://localhost:5110/submit_application', {
+    const response = await fetch('http://localhost:5300/create_application', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
