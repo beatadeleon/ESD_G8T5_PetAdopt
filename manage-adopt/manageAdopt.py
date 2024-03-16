@@ -52,9 +52,14 @@ def createReq(formData):
         notification_result = requests.post(url=notification_url, json=formData)
     
     if notification_result in range(200,300) and adoption_result.status_code in range(200, 300):
+        # Update the pet's application
+        pet_result = petApplicant(formData.pet)
         return jsonify({
             "message": "Application processed successfully!"
         })
+        
+def petApplicant(pet):
+    pass
 
     
     
