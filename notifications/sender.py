@@ -19,7 +19,7 @@ except AMQPConnectionError as e:
     print("Failed to establish connection to RabbitMQ:", str(e))
     sys.exit(1)
     
-    
+# SEND CONFIRMATION EMAIL  
 @app.route('/confirm', methods=['POST'])
 def confirm():
     email = request.get_json()['email']
@@ -32,7 +32,8 @@ def confirm():
         return "{'status': 201, 'msg': 'CONFIRM NOTIFICATION SENT SUCCESSFULLY'}"
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
-    
+
+# SEND SHORTLIST EMAIL   
 @app.route('/shortlist', methods=['POST'])
 def shortlist():
     email = request.get_json()['email']
@@ -45,7 +46,8 @@ def shortlist():
         return "{'status': 201, 'msg': 'SHORTLIST NOTIFICATION SENT SUCCESSFULLY'}"
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
-    
+
+# SEND ACCEPT EMAIL   
 @app.route('/accept', methods=['POST'])
 def accept():
     email = request.get_json()['email']
@@ -59,6 +61,7 @@ def accept():
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
 
+# SEND REJECT EMAIL
 @app.route('/reject', methods=['POST'])
 def reject():
     email = request.get_json()['email']
