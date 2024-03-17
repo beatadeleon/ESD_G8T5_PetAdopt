@@ -10,9 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-accept_URL = "http://localhost:5500/accept"
-shortlisted_URL = "http://localhost:5500/shortlist"
-rejected_URL = "http://localhost:5500/reject"
+notification_URL = "http://localhost:5110/accept"
 
 
 @app.route("/accept_request", methods=['POST'])
@@ -25,20 +23,6 @@ def accept_request():
             # Update adoption status
             adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
             print('Adoption response:', adoption_response)
-
-            # Determine the notification URL based on the adoption status
-            status = request_data.get('status')
-            if status == 'pending':
-                notification_URL = shortlisted_URL
-            elif status == 'rejected':
-                notification_URL = rejected_URL
-            elif status == 'confirmed':
-                notification_URL = accept_URL
-            else:
-                return jsonify({
-                    "code": 400,
-                    "message": f"Invalid status: {status}"
-                }), 400
 
             # Send notification
             notification_response = invoke_http(notification_URL, method='POST', json=request_data)
@@ -64,7 +48,6 @@ def accept_request():
         "code": 400,
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
-
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
