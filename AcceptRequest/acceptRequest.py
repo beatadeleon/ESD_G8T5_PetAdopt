@@ -53,4 +53,4 @@ def accept_request():
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
           " for accepting adoption requests...")
-    app.run(host="0.0.0.0", port=5300, debug=True)
+    app.run(host="0.0.0.0", port=5400, debug=True)

@@ -157,7 +157,7 @@ def update_application_status(id):
     data = request.json
 
     if 'status' not in data:
-        return jsonify({'error': 'Missing status field.'}), 400
+        return jsonify({"status": "open"}), 400
 
     status = data['status']
     application_ref = root_ref.child(f'adoptionRequests/{id}')
