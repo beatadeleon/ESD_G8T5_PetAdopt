@@ -1,25 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import firebase_admin
-from firebase_admin import credentials, db
-from dotenv import load_dotenv
-import os
+
+import os, sys
+
 import requests
+# from invokes import invoke_http
 
 app = Flask(__name__)
 CORS(app)
-
-# Load environment variables
-load_dotenv()
-
-databaseURL = os.getenv('DATABASE_URL')
-service_account_path = os.getenv('SERVICE_ACCOUNT_PATH')
-
-cred_obj = firebase_admin.credentials.Certificate(service_account_path)
-default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL': databaseURL})
-
-# Reference to db
-root_ref = db.reference()
 
 adoption_url = 'http://localhost:5110/submit_application'
 notification_url ='http://localhost:5200/confirm'
@@ -37,8 +25,21 @@ def submit_application():
             })
             # response = requests.post(adoption_url, json=request.get_json)
             # print(response)
-        except:
-            return 'Bad'
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+            print(ex_str)
+
+            return jsonify({
+                "code": 500,
+                "message": "Accept request microservice internal error: " + ex_str
+            }), 500
+    
+    return jsonify({
+        "code": 400,
+        "message": "Invalid JSON input: " + str(request.get_data())
+    }), 400
             
     
 def createReq(formData):
