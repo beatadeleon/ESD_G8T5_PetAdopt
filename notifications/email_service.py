@@ -24,7 +24,7 @@ def receiveOrderLog(channel):
         channel.basic_consume(queue=confirm_queue_name, on_message_callback=callback, auto_ack=True)
         print('reject: Consuming from queue:', r_queue_name)
         channel.basic_consume(queue=r_queue_name, on_message_callback=callback, auto_ack=True)
-        print('reject: Consuming from queue:', cancel_queue_name)
+        print('cancel: Consuming from queue:', cancel_queue_name)
         channel.basic_consume(queue=cancel_queue_name, on_message_callback=callback, auto_ack=True)
         channel.start_consuming()  # an implicit loop waiting to receive messages;
              #it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
@@ -38,7 +38,7 @@ def receiveOrderLog(channel):
 
 
 def callback(channel, method, properties, body): # required signature for the callback; no return
-    print("\naccept: Received an order log by " + __file__)
+    print("\naccept: Received an email by " + __file__)
     subject, receiver_email, message = body.decode().split(',')
     send_email(receiver_email, subject, message)
 
