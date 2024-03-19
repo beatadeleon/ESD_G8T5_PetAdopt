@@ -80,6 +80,21 @@ def reject():
     except AMQPConnectionError as e:
         return "Failed to publish reject message due to connection error", str(e)
 
+# SEND CANCEL EMAIL
+@app.route('/cancel', methods=['POST'])
+def cancel():
+    email = request.get_json()['email']
+    pet = request.get_json()['pet']
+    subject = "Adoption request update"
+    message = f"Hi {email}. Your application for {pet} has been succesfully cancelled. Thanks for your interest and you may apply for more pets"
+    body = f"{subject}, {email}, {message}"
+    try:
+        channel.basic_publish(exchange=exchangename, routing_key=email+'.cancel', 
+                              body=body, properties=pika.BasicProperties(delivery_mode=2))
+        return "{'status': 201, 'msg': 'CANCEL NOTIFICATION SENT SUCCESSFULLY'}"
+    except AMQPConnectionError as e:
+        return "Failed to publish cancel message due to connection error", str(e)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5200, debug=True)
