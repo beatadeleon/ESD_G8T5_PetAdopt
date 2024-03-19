@@ -47,7 +47,7 @@ def createReq(formData):
     print('----Sending formData to adoption service-----')
     adoption_result = requests.post(url=adoption_url, json=formData)
     
-    # If adoption_result is 200, send confirmation email
+    # If adoption_result is (200,300), send confirmation email
     if adoption_result.status_code in range(200, 300):
         print('----Sending confirmation email to notification service -------')
         notification_result = requests.post(url=notification_url, json=formData)

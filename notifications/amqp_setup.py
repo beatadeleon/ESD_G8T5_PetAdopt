@@ -64,23 +64,21 @@ def create_queues(channel):
     create_shortlist_queue(channel)
     create_accept_queue(channel)
     create_reject_queue(channel)
+    create_cancel_queue(channel)
 
 # function to create accept queue  
 def create_confirmation_queue(channel):
     print('amqp_setup:create confirmation queue')
-    c_queue_name = 'confirm'
-    channel.queue_declare(queue=c_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
-    channel.queue_bind(exchange=exchangename, queue=c_queue_name, routing_key='#.confirm')
-        # bind the queue to the exchange via the key
-        # 'routing_key=#' => any routing_key would be matched
-# function to create accept queue  
+    confirm_queue_name = 'confirm'
+    channel.queue_declare(queue=confirm_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
+    channel.queue_bind(exchange=exchangename, queue=confirm_queue_name, routing_key='#.confirm')
+
+# function to create shortlist queue  
 def create_shortlist_queue(channel):
     print('amqp_setup:create shortlist queue')
     s_queue_name = 'shortlist'
     channel.queue_declare(queue=s_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
     channel.queue_bind(exchange=exchangename, queue=s_queue_name, routing_key='#.shortlist')
-        # bind the queue to the exchange via the key
-        # 'routing_key=#' => any routing_key would be matched
 
 # function to create accept queue  
 def create_accept_queue(channel):
@@ -88,18 +86,26 @@ def create_accept_queue(channel):
     a_queue_name = 'accept'
     channel.queue_declare(queue=a_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
     channel.queue_bind(exchange=exchangename, queue=a_queue_name, routing_key='#.accept')
-        # bind the queue to the exchange via the key
-        # 'routing_key=#' => any routing_key would be matched
+
     
-# function to create Error queue
+# function to create reject queue
 def create_reject_queue(channel):
     print('amqp_setup:create reject queue')
     r_queue_name = 'reject'
     channel.queue_declare(queue=r_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
     #bind Error queue
     channel.queue_bind(exchange=exchangename, queue=r_queue_name, routing_key='#.reject')
+
+        
+# function to create cancel queue
+def create_cancel_queue(channel):
+    print('amqp_setup:create cancel queue')
+    cancel_queue_name = 'cancel'
+    channel.queue_declare(queue=cancel_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
+    #bind Error queue
+    channel.queue_bind(exchange=exchangename, queue=cancel_queue_name, routing_key='#.cancel')
         # bind the queue to the exchange via the key
-        # any routing_key with two words and ending with '.error' will be matched
+
 
 
 
