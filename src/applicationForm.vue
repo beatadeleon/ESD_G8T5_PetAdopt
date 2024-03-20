@@ -28,6 +28,7 @@
           <button type="submit">Submit Application</button>
         </div>
       </form>
+      <p v-if="displayMessage">{{ displayMessage }}</p>
     </div>
   </template>
   
@@ -35,6 +36,8 @@
   import { ref } from 'vue'; // Import ref from Vue
   import { ref as dbRef, getDatabase, onValue, push, set } from 'firebase/database'; // Import dbRef and other functions from firebase/database
   import { auth } from './firebaseConfig';
+
+
 
   const db = getDatabase();
   // Initialize an empty array to hold the pet listings
@@ -61,7 +64,7 @@
     pet: ''
   });
   
-
+  const displayMessage = ref('');
  // Define the submitApplication method and call adoption service
 const submitApplication = async () => {
   const user = auth.currentUser;
@@ -99,8 +102,10 @@ const submitApplication = async () => {
         pet: ''
       };
       console.log('Application submitted successfully!');
+      displayMessage.value = 'Application submitted successfully!';
     } else {
       console.error('Failed to submit application:', response.statusText);
+      
     }
   } else {
     console.log('User not logged in.');
