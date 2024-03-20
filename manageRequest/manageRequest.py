@@ -32,7 +32,7 @@ def submit_application():
 
             return jsonify({
                 "code": 500,
-                "message": "Accept request microservice internal error: " + ex_str
+                "message": "manageRequest microservice internal error: " + ex_str
             }), 500
     
     return jsonify({
