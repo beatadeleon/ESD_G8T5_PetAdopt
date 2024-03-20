@@ -58,12 +58,46 @@ def find_listing_by_id(id):
             "message": "Listing not found."
         }), 404
 
-# update the applicant number
-@app.route("/petListings/<string:id>/applicants", methods=['PUT'])
-def update_applicants(action):
-    if action == 'add':
-        pass
-    else:
-        pass
+# add applicant
+@app.route("/add/<string:id>", methods=['PUT'])
+def add_applicant(id):
+    listings_ref = root_ref.child('petListings')
+    document_ref = listings_ref.child(id)
+    document = document_ref.get()
+    if document is None:
+        return jsonify({'code': 404, 'message': f'ID {id} not found'}), 404
+    try:
+        new_applicants = document.get('applicants', 0) + 1
+        document_ref.update({'applicants': new_applicants})
+        return jsonify({
+            'message': f'ADD success. New applicant number for {id}: {new_applicants}'
+        }), 200
+    except Exception as e:
+        return jsonify({'code': 500, 'message': f'Internal server error: {str(e)}'}), 500
+            
+
+
+   
+# remove applicant
+@app.route("/remove/<string:id>", methods=['PUT'])
+def remove_applicant(id):
+    listings_ref = root_ref.child('petListings')
+    document_ref = listings_ref.child(id)
+    document = document_ref.get()
+    if document is None:
+        return jsonify({'code': 404, 'message': f'ID {id} not found'}), 404
+    try:
+        if document.get('applicants') == 0:
+            return jsonify({'code': 400,
+                            'message': f'CANNOT remove. Applicant number for {id} is already 0. '})
+        else:
+            new_applicants = document.get('applicants', 0) - 1
+            document_ref.update({'applicants': new_applicants})
+            return jsonify({
+                'message': f'REMOVE success. New applicant number for {id}: {new_applicants}'
+            }), 200
+    except Exception as e:
+        return jsonify({'code': 500, 'message': f'Internal server error: {str(e)}'}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8082, debug=True)
