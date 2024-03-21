@@ -20,10 +20,6 @@
         </div>
         <div>
           <label for="pet">Select Pet:</label>
-          <!-- <select id="pet" v-model="formData.pet" required>
-            <option v-for="pet in petListings" :key="pet.name" :value="pet.name">{{ pet.name }}</option>
-          </select> -->
-
           <select id="pet" v-model="formData.pet" required @change="setPetId">
             <option v-for="pet in petListings" :key="pet.id" :value="pet.name">{{ pet.name }}</option>
           </select>
@@ -51,15 +47,6 @@
   const petListingsRef = dbRef(db, 'petListings');
   
   // Fetch the pet listings from the database
-  // onValue(petListingsRef, (snapshot) => {
-  //   const data = snapshot.val();
-  //   if (data) {
-  //     // Convert the object of pet listings into an array
-  //     petListings.value = Object.values(data);
-  //     console.log(petListings)
-  //   }
-  // });
-
   onValue(petListingsRef, (snapshot) => {
   const data = snapshot.val();
   if (data) {
