@@ -58,7 +58,7 @@ def submit_application():
         'status': 'open'
     })
 
-    return jsonify({'message': 'Application submitted successfully!'})
+    return jsonify({'message': 'Application submitted successfully!'}), 201
 
 
 @app.route("/adoptionRequests/open")
