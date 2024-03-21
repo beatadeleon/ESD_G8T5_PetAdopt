@@ -38,12 +38,11 @@ def receiveOrderLog(channel):
 
 
 def callback(channel, method, properties, body): # required signature for the callback; no return
-    print("\naccept: Received an email by " + __file__)
+    print("\nReceived an email by " + __file__)
     subject, receiver_email, message = body.decode().split(',')
     send_email(receiver_email, subject, message)
 
     
-
 
 
 connection = amqp_connection.create_connection()  # get the connection to the broker
