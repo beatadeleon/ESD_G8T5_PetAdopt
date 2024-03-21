@@ -170,7 +170,7 @@ def update_application_status(id):
     else:
         return jsonify({'error': 'Application not found.'}), 404
 
-@app.route("/adoptionRequests/user/<string:userId>")
+@app.route("/adoptionRequests/userId/<string:userId>")
 def get_listing_by_userId(userId):
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
