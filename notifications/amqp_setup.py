@@ -7,13 +7,6 @@ port = 5672            # default port
 exchangename = "test_email" # exchange name
 exchangetype = "topic" # - use a 'topic' exchange to enable interaction
 
-# Instead of hardcoding the values, we can also get them from the environ as shown below
-# hostname = environ.get('hostname') #localhost
-# port = environ.get('port')         #5672 
-# exchangename = environ.get('exchangename') #order_topic
-# exchangetype = environ.get('exchangetype') #topic
-# a_queue_name = environ.get('a_queue_name') #accept
-# e_queue_name = environ.get('e_queue_name') #reject
 
 #to create a connection to the broker
 def create_connection(max_retries=12, retry_interval=5):
