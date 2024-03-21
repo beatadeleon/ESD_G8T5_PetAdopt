@@ -11,7 +11,8 @@ CORS(app)
 
 adoption_url = 'http://localhost:5110/submit_application'
 notification_url ='http://localhost:5200/confirm'
-
+# pets_url
+# error_url
 
 @app.route('/create_application', methods=['POST'])
 def submit_application():
@@ -32,7 +33,7 @@ def submit_application():
 
             return jsonify({
                 "code": 500,
-                "message": "manageRequest microservice internal error: " + ex_str
+                "message": "Accept request microservice internal error: " + ex_str
             }), 500
     
     return jsonify({
@@ -45,31 +46,25 @@ def createReq(formData):
     # POST request to Adoption service
     print('----Sending formData to adoption service-----')
     adoption_result = requests.post(url=adoption_url, json=formData)
-    print(adoption_result)
     
-    # If adoption_result is (200,300), send confirmation email
+    # If adoption_result is 200, send confirmation email
     if adoption_result.status_code in range(200, 300):
         print('----Sending confirmation email to notification service -------')
         notification_result = requests.post(url=notification_url, json=formData)
-        print(notification_result)
     
-    if notification_result.status_code in range(200,300) and adoption_result.status_code in range(200, 300):
+    if notification_result in range(200,300) and adoption_result.status_code in range(200, 300):
         # Update the pet's application
-        pet_result = petApplicant(formData["petid"])
-        print(pet_result)
-        if pet_result:
-            return jsonify({
-                "code":201,
-                "message": 'Application processed successfully'
-            }), 201
+        pet_result = petApplicant(formData.pet)
+        return jsonify({
+            "message": "Application processed successfully!"
+        })
         
-def petApplicant(petid):
-    pet_url = f'http://localhost:8082/add/{petid}'
-    result = requests.put(url=pet_url)
-    print(result.status_code)
-    print(result.text) 
-    return result
+def petApplicant(pet):
+    pass
 
+    
+    
+    
     
     
 

@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-cancel_url ='http://localhost:5200/cancel'
+cancel_url ='http://localhost:5500/cancel'
 # booking_url
 
 @app.route("/cancel_request", methods=['POST'])
@@ -25,13 +25,19 @@ def cancel_request():
             adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
             print('Adoption response:', adoption_response)
 
+            #Body:
+            # {
+            #    "requestId": "-NtFFI_b7qhOQDT4LR-c",
+            #    "status": "cancelled"
+            # }
+
             # Send notification
             notification_response = invoke_http(cancel_url, method='POST', json=request_data)
             print('Notification response:', notification_response)
 
             return jsonify({
                 "adoption_response": adoption_response,
-                "notification_response": notification_response
+                # "notification_response": notification_response
             }), 200
 
         except Exception as e:

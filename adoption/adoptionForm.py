@@ -37,7 +37,6 @@ def submit_application():
         phone = data['phone']
         message = data['message']
         pet = data['pet']
-        petId = data['petid']
 
     except KeyError as e:
         return jsonify({'error': f'Missing required field: {e.args[0]}'}), 400
@@ -54,7 +53,6 @@ def submit_application():
         'phone': phone,
         'message': message,
         'pet': pet,
-        'petid': petId,
         'status': 'open'
     })
 

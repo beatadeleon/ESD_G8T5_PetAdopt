@@ -12,7 +12,6 @@
     "firebase": "^10.8.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
-    "vue-toastification": "^1.7.14",
     "vuefire": "^3.1.23",
     "vuex": "^4.1.0"
   },
