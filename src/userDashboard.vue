@@ -10,6 +10,7 @@
         <p>Species: {{ pet.species }}</p>
         <p>Age: {{ pet.age }}</p>
         <p>Breed: {{ pet.breed }}</p>
+        <p>Number of applicants: {{pet.applicants}}</p>
       </div>
     </div>
   </div>

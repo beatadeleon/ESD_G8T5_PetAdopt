@@ -37,6 +37,7 @@ def submit_application():
         phone = data['phone']
         message = data['message']
         pet = data['pet']
+        petId = data['petid']
 
     except KeyError as e:
         return jsonify({'error': f'Missing required field: {e.args[0]}'}), 400
@@ -53,10 +54,11 @@ def submit_application():
         'phone': phone,
         'message': message,
         'pet': pet,
+        'petid': petId,
         'status': 'open'
     })
 
-    return jsonify({'message': 'Application submitted successfully!'})
+    return jsonify({'message': 'Application submitted successfully!'}), 201
 
 
 @app.route("/adoptionRequests/open")
@@ -168,6 +170,28 @@ def update_application_status(id):
     else:
         return jsonify({'error': 'Application not found.'}), 404
 
+@app.route("/adoptionRequests/user/<string:userId>")
+def get_listing_by_userId(userId):
+    application_ref = root_ref.child('adoptionRequests')
+    applications = application_ref.get()
+
+    if applications:
+        user_applications = [application for application in applications.values() if application.get('userId') == userId]
+        if user_applications:
+            return jsonify({
+                "code": 200,
+                "data": user_applications
+            })
+        else:
+            return jsonify({
+                "code": 404,
+                "message": f"No applications found for userId: {userId}"
+            }), 404
+    else:
+        return jsonify({
+            "code": 404,
+            "message": "There are no applications."
+        }), 404
 
 
 @app.route("/adoptionRequests/<string:id>")

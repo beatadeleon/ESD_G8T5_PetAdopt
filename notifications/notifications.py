@@ -26,12 +26,12 @@ def confirm():
     pet = request.get_json()['pet']
     subject = 'Confirmation of adoption request'
     # Need to change to name of user, might need to retrieve from db
-    message = f"Hi {email}. This email is to confirm your adoption request {pet}"
+    message = f"Hi {email}. This email is to confirm your adoption request for {pet}. You may view your application status on Pet Adopt"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.confirm', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "{'status': 201, 'msg': 'CONFIRM NOTIFICATION SENT SUCCESSFULLY'}"
+        return jsonify({'status': 201, 'msg': 'CONFIRM NOTIFICATION SENT SUCCESSFULLY'}), 201
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
 
@@ -46,7 +46,7 @@ def shortlist():
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.shortlist', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "{'status': 201, 'msg': 'SHORTLIST NOTIFICATION SENT SUCCESSFULLY'}"
+        return jsonify({'status': 201, 'msg': 'SHORTLIST NOTIFICATION SENT SUCCESSFULLY'}), 201
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
 
@@ -61,7 +61,7 @@ def accept():
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.accept', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "{'status': 201, 'msg': 'ACCEPT NOTIFICATION SENT SUCCESSFULLY'}"
+        return jsonify({'status': 201, 'msg': 'ACCEPT NOTIFICATION SENT SUCCESSFULLY'}), 201
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
 
@@ -76,7 +76,7 @@ def reject():
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.reject', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "{'status': 201, 'msg': 'REJECT NOTIFICATION SENT SUCCESSFULLY'}"
+        return jsonify({'status': 201, 'msg': 'REJECT NOTIFICATION SENT SUCCESSFULLY'}), 201
     except AMQPConnectionError as e:
         return "Failed to publish reject message due to connection error", str(e)
 
@@ -91,7 +91,7 @@ def cancel():
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.cancel', 
                               body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return "{'status': 201, 'msg': 'CANCEL NOTIFICATION SENT SUCCESSFULLY'}"
+        return jsonify({'status': 201, 'msg': 'CANCEL NOTIFICATION SENT SUCCESSFULLY'}), 201
     except AMQPConnectionError as e:
         return "Failed to publish cancel message due to connection error", str(e)
 
