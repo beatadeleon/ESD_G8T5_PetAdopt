@@ -170,6 +170,28 @@ def update_application_status(id):
     else:
         return jsonify({'error': 'Application not found.'}), 404
 
+@app.route("/adoptionRequests/user/<string:userId>")
+def get_listing_by_userId(userId):
+    application_ref = root_ref.child('adoptionRequests')
+    applications = application_ref.get()
+
+    if applications:
+        user_applications = [application for application in applications.values() if application.get('userId') == userId]
+        if user_applications:
+            return jsonify({
+                "code": 200,
+                "data": user_applications
+            })
+        else:
+            return jsonify({
+                "code": 404,
+                "message": f"No applications found for userId: {userId}"
+            }), 404
+    else:
+        return jsonify({
+            "code": 404,
+            "message": "There are no applications."
+        }), 404
 
 
 @app.route("/adoptionRequests/<string:id>")
