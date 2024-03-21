@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="application-form-link">
-      <router-link to="/applicationForm">Apply Now</router-link>
+    <div class="link-container">
+      <router-link to="/applicationForm" class="dashboard-link">Apply Now</router-link>
+      <router-link to="/showuserRequests" class="dashboard-link">Show User Requests</router-link>
     </div>
     <div class="pet-card-container">
       <div class="pet-card" v-for="pet in petData" :key="pet.name">
@@ -48,6 +49,7 @@ fetchPetListings();
 }
 
 .pet-card-container {
+  margin-top: 100px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -66,4 +68,22 @@ fetchPetListings();
   width: 100%;
   height: auto;
 }
+
+.dashboard-link {
+  padding: 10px; /* Adjust padding as needed */
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.dashboard-link + .dashboard-link {
+  margin-left: 20px; /* Add margin between links */
+}
+
+.dashboard-link:hover {
+  background-color: #0056b3;
+}
 </style>
+
+
