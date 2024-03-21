@@ -6,25 +6,26 @@ import pika
 from test_email import send_email
 
 
-c_queue_name = 'confirm' # queue to be subscribed by Activity_Log microservice
-s_queue_name = 'shortlist' # queue to be subscribed by Activity_Log microservice
-a_queue_name = 'accept' # queue to be subscribed by Activity_Log microservice
-r_queue_name = 'reject' # queue to be subscribed by Activity_Log microservice
+confirm_queue_name = 'confirm' 
+s_queue_name = 'shortlist' 
+a_queue_name = 'accept' 
+r_queue_name = 'reject' 
+cancel_queue_name = 'cancel' 
 
-# Instead of hardcoding the values, we can also get them from the environ as shown below
-# a_queue_name = environ.get('Activity_Log') #Activity_Log
 
 def receiveOrderLog(channel):
     try:
         # set up a consumer and start to wait for coming messages
         print('accept: Consuming from queue:', a_queue_name)
-        channel.basic_consume(queue=c_queue_name, on_message_callback=callback, auto_ack=True)
+        channel.basic_consume(queue=a_queue_name, on_message_callback=callback, auto_ack=True)
         print('shortlist: Consuming from queue:', s_queue_name)
         channel.basic_consume(queue=s_queue_name, on_message_callback=callback, auto_ack=True)
-        print('confirm: Consuming from queue:', c_queue_name)
-        channel.basic_consume(queue=c_queue_name, on_message_callback=callback, auto_ack=True)
+        print('confirm: Consuming from queue:', confirm_queue_name)
+        channel.basic_consume(queue=confirm_queue_name, on_message_callback=callback, auto_ack=True)
         print('reject: Consuming from queue:', r_queue_name)
         channel.basic_consume(queue=r_queue_name, on_message_callback=callback, auto_ack=True)
+        print('cancel: Consuming from queue:', cancel_queue_name)
+        channel.basic_consume(queue=cancel_queue_name, on_message_callback=callback, auto_ack=True)
         channel.start_consuming()  # an implicit loop waiting to receive messages;
              #it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
     
@@ -37,7 +38,7 @@ def receiveOrderLog(channel):
 
 
 def callback(channel, method, properties, body): # required signature for the callback; no return
-    print("\naccept: Received an order log by " + __file__)
+    print("\naccept: Received an email by " + __file__)
     subject, receiver_email, message = body.decode().split(',')
     send_email(receiver_email, subject, message)
 
