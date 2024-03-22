@@ -6,6 +6,8 @@ import Home from '../home.vue'
 import AdminDashboardComponent from '../adminDashboard.vue';
 import UserDashboardComponent from '../userDashboard.vue';
 import ApplicationFormComponent from '../applicationForm.vue';
+import showuserRequestsComponent from '../showuserRequests.vue';
+// import bookingComponent from '../../booking/booking.html'
 import { ref, get } from 'firebase/database';
 
 
@@ -54,6 +56,16 @@ const routes = [
       name: 'ApplicationForm',
       component: ApplicationFormComponent,
     },
+    {
+      path:'/showuserRequests',
+      name: 'showuserRequests',
+      component: showuserRequestsComponent,
+    },
+    // {
+    //   path:'/booking',
+    //   name: 'booking',
+    //   component: bookingComponent,
+    // }
   
 ]
 

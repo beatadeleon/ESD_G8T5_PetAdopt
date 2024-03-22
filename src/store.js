@@ -43,6 +43,7 @@ const store = createStore({
           await updateProfile(user, { displayName: name });
           const db = getDatabase();
           await set(ref(db, 'users/' + user.uid), {
+            userid: user.uid,
             displayName: name,
             email: email,
             address: address,
