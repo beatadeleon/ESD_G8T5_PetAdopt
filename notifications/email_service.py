@@ -3,7 +3,7 @@ import amqp_connection
 import json
 import pika
 #from os import environ
-from notifications.send_email import send_email
+from send_email import send_email
 
 
 confirm_queue_name = 'confirm' 
