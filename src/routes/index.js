@@ -7,7 +7,6 @@ import AdminDashboardComponent from '../adminDashboard.vue';
 import UserDashboardComponent from '../userDashboard.vue';
 import ApplicationFormComponent from '../applicationForm.vue';
 import { ref, get } from 'firebase/database';
-import BookingComponent from '../booking.vue';
 
 
 
@@ -54,15 +53,6 @@ const routes = [
       path: '/applicationForm',
       name: 'ApplicationForm',
       component: ApplicationFormComponent,
-    },
-    {
-      path: '/booking',
-      name: 'Booking',
-      component: BookingComponent,
-      meta: {
-          requiresAuth: true, // Example: Booking requires authentication
-          requiredRole: 'user' // Example: Booking requires user role
-      }
     },
   
 ]
