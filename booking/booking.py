@@ -23,6 +23,28 @@ CALENDLY_BASE_URL = 'https://api.calendly.com'
 
 
 
+@app.route("/get_user_id")
+def get_user_id():
+    if request.is_json:
+        try:
+            data = request.get_json()
+            user_id = data.get('userId')
+            if not user_id:
+                return jsonify({
+                    "code": 400,
+                    "message": "Missing userId in the request"
+                }), 400
+        except Exception as e:
+            return jsonify({
+                "code": 500,
+                "message": "An error occurred: " + str(e)
+            }), 500
+    else:
+        return jsonify({
+            "code": 400,
+            "message": "Request must be JSON"
+        }), 400
+
 @app.route("/update_booking", methods=['POST'])
 def update_booking():
     if request.is_json:
