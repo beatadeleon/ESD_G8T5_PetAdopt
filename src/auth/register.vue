@@ -10,24 +10,26 @@ const error = ref(null)
 const pnum = ref('')
 const address = ref('')
 const Pcode = ref('')
+const calendlyUuid = ref(null)
 
 const store = useStore()
 const router = useRouter()
 
 const Register = async () => {
-  try{
+  try {
     if (validatePassword(password.value)) {
       await store.dispatch('registerUser', {
-      email: email.value,
-      password: password.value,
-      name: name.value,
-      address: address.value,
-      pcode: Pcode.value,
-      pnum: pnum.value,
-      role: 'user',
+        email: email.value,
+        password: password.value,
+        name: name.value,
+        address: address.value,
+        pcode: Pcode.value,
+        pnum: pnum.value,
+        role: 'user',
+        calendlyUuid: 'null'
       })
       router.push('/')
-    }else{
+    } else {
       error.value = 'Password must contain at least one non-letter and non-number character.'
     }
   } catch (err) {
@@ -70,6 +72,10 @@ const validatePassword = (password) => {
                     />
                   </div>
                   <br/>
+                  <input
+                        type="hidden"
+                        v-model="calendlyUuid"
+                      />
                   <div class="form-group mb-3">
                     <label for="email" class="col-md-6 col-form-label ">Email<span style="color:red;">*</span>:</label>
                       <input
@@ -152,6 +158,10 @@ const validatePassword = (password) => {
                         <button role="link" class="btn btn-outline-dark">Cancel</button>
                       </router-link>
                     </div>
+
+                
+
+
                     
                   </div>
                 </form>

@@ -6,11 +6,8 @@ import Home from '../home.vue'
 import AdminDashboardComponent from '../adminDashboard.vue';
 import UserDashboardComponent from '../userDashboard.vue';
 import ApplicationFormComponent from '../applicationForm.vue';
-<<<<<<< Updated upstream
-=======
 import showuserRequestsComponent from '../showuserRequests.vue';
 import bookingComponent from '../booking.vue'
->>>>>>> Stashed changes
 import { ref, get } from 'firebase/database';
 
 
@@ -59,8 +56,6 @@ const routes = [
       name: 'ApplicationForm',
       component: ApplicationFormComponent,
     },
-<<<<<<< Updated upstream
-=======
     {
       path:'/showuserRequests',
       name: 'showuserRequests',
@@ -70,9 +65,7 @@ const routes = [
       path:'/booking',
       name: 'booking',
       component: bookingComponent,
-    }
->>>>>>> Stashed changes
-  
+    }  
 ]
 
 

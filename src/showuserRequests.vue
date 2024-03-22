@@ -15,6 +15,7 @@ import { auth } from './firebaseConfig';
           <!-- Add more details as needed -->
           <router-link to="/booking" v-if="request.status === 'pending'">Book</router-link>
 
+
         </div>
       </div>
     </div>

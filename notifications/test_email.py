@@ -5,8 +5,6 @@ from email.mime.multipart import MIMEMultipart
 def send_email(receiver_email, subject, message):
     # Email configuration
     sender_email = "beatasanchax@gmail.com"
-    # receiver_email = "beasdeleon@gmail.com"
-    # subject = "second email"
     body = message
 
     # Gmail SMTP server configuration

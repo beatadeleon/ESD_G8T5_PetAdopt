@@ -15,9 +15,10 @@ auth.onAuthStateChanged((user) => {
 
 const user = computed(() => {
   return store.getters.user
-  
+
 })
 
+console.log(user)
 </script>
 
 <template>

@@ -34,7 +34,7 @@ const store = createStore({
     },
   },
   actions: {
-    async registerUser(context, { email, password, name, address, pcode, role, pnum }) {
+    async registerUser(context, { email, password, name, address, pcode, role, pnum, calendlyUuid }) {
       try {
         // Create the user in Firebase Authentication
         const response = await createUserWithEmailAndPassword(auth, email, password);
@@ -43,12 +43,14 @@ const store = createStore({
           await updateProfile(user, { displayName: name });
           const db = getDatabase();
           await set(ref(db, 'users/' + user.uid), {
+            userid: user.uid,
             displayName: name,
             email: email,
             address: address,
             pcode: pcode,
             role: role,
             phoneNumber: pnum,
+            calendlyUuid: calendlyUuid,
             // Add any other user information you want to store
           });
           context.commit('SET_USER', user);
