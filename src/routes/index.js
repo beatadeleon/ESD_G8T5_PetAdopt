@@ -7,7 +7,7 @@ import AdminDashboardComponent from '../adminDashboard.vue';
 import UserDashboardComponent from '../userDashboard.vue';
 import ApplicationFormComponent from '../applicationForm.vue';
 import showuserRequestsComponent from '../showuserRequests.vue';
-// import bookingComponent from '../../booking/booking.html'
+import bookingComponent from '../booking.vue'
 import { ref, get } from 'firebase/database';
 
 
@@ -61,12 +61,11 @@ const routes = [
       name: 'showuserRequests',
       component: showuserRequestsComponent,
     },
-    // {
-    //   path:'/booking',
-    //   name: 'booking',
-    //   component: bookingComponent,
-    // }
-  
+    {
+      path:'/booking',
+      name: 'booking',
+      component: bookingComponent,
+    }  
 ]
 
 
