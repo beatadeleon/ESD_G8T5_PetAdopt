@@ -14,13 +14,16 @@ export default {
     script.src = 'https://assets.calendly.com/assets/external/widget.js';
     document.head.appendChild(script);
 
-    // Use the API call to initialize the inline widget
-    Calendly.initInlineWidget({
-      url: 'https://calendly.com/chooyining-sg/adoption-suitability-assesment',
-      parentElement: document.getElementById('calendly-embed'),
-      prefill: {},
-      utm: {}
-    });
+    // Add an event listener to execute code once the script has finished loading
+    script.onload = () => {
+      // Use the API call to initialize the inline widget
+      Calendly.initInlineWidget({
+        url: 'https://calendly.com/chooyining-sg/adoption-suitability-assesment',
+        parentElement: document.getElementById('calendly-embed'),
+        prefill: {},
+        utm: {}
+      });
+    };
 
     function isCalendlyEvent(e) {
       return e.origin === "https://calendly.com" && e.data.event && e.data.event.indexOf("calendly.") === 0;
