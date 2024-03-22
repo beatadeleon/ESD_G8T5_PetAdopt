@@ -23,17 +23,39 @@ CALENDLY_BASE_URL = 'https://api.calendly.com'
 
 
 
-@app.route("/get_user_id")
+@app.route("/get_user_id", methods=['POST'])
 def get_user_id():
     if request.is_json:
         try:
             data = request.get_json()
-            user_id = data.get('userId')
-            if not user_id:
+            user_email = data.get('email')
+
+            if not user_email:
                 return jsonify({
                     "code": 400,
-                    "message": "Missing userId in the request"
+                    "message": "Missing email in the request"
                 }), 400
+
+            users_ref = db.reference('users')
+            query_result = users_ref.order_by_child('email').equal_to(user_email).get()
+
+            user_id = None
+            for key, value in query_result.items():
+                if value['email'] == user_email:
+                    user_id = key
+                    break
+
+            if user_id:
+                return jsonify({
+                    "code": 200,
+                    "userId": user_id
+                }), 200
+            else:
+                return jsonify({
+                    "code": 404,
+                    "message": "User not found"
+                }), 404
+
         except Exception as e:
             return jsonify({
                 "code": 500,
