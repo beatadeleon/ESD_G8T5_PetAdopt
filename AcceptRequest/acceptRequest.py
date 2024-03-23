@@ -21,6 +21,15 @@ def accept_request():
         try:
             request_data = request.get_json()
             print("\nReceived a request in JSON:", request_data)
+            
+            # Get the application data
+            application_data = request_data["application"]
+            print("\n Application data in JSON:", application_data)
+            
+            # Get the new status data
+            new_status_data = request_data["status"]
+            print("\n New status data in JSON:", new_status_data)
+
 
             # Update adoption status
             adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
