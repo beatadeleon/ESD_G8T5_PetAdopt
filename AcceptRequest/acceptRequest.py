@@ -32,7 +32,7 @@ def accept_request():
 
 
             # Update adoption status
-            adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
+            adoption_response = invoke_http(adoption_URL.format(application_data.get('requestId')), method='PUT', json={"status": new_status_data})
             print('Adoption response:', adoption_response)
 
             # Determine the notification URL based on the adoption status
