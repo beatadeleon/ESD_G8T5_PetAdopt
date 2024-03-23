@@ -13,7 +13,8 @@ import { auth } from './firebaseConfig';
           <p>Email: {{ request.email }}</p>
           <p>Status: {{ request.status }}</p>
           <!-- Add more details as needed -->
-          <router-link to="../booking/booking.html" v-if="request.status === 'pending'">Book</router-link>
+          <router-link to="/booking" v-if="request.status === 'pending'">Book</router-link>
+
 
         </div>
       </div>
