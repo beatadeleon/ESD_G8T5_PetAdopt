@@ -4,6 +4,7 @@ from flask_cors import CORS
 import os, sys
 
 import requests
+import time
 # from invokes import invoke_http
 
 app = Flask(__name__)
@@ -41,7 +42,7 @@ def submit_application():
     }), 400
             
     
-def createReq(formData):
+def createReq(formData, max_retries=3, delay=1):
     # POST request to Adoption service
     print('----Sending formData to adoption service-----')
     adoption_result = requests.post(url=adoption_url, json=formData)
@@ -49,19 +50,46 @@ def createReq(formData):
     
     # If adoption_result is (200,300), send confirmation email
     if adoption_result.status_code in range(200, 300):
-        print('----Sending confirmation email to notification service -------')
-        notification_result = requests.post(url=notification_url, json=formData)
-        print(notification_result)
+        for _ in range(max_retries):
+            print('----Sending confirmation email to notification service -------')
+            notification_result = requests.post(url=notification_url, json=formData)
+            print(notification_result)
+            
+            if notification_result.status_code in range(200, 300):
+                break  # Success, exit retry loop
+            
+            time.sleep(delay)  # Wait before retrying
+        
+        if notification_result.status_code in range(200, 300):
+            # Update the pet's application
+            pet_result = petApplicant(formData["petid"])
+            print(pet_result)
+            if pet_result:
+                return jsonify({
+                    "code":201,
+                    "message": 'Application processed successfully'
+                }), 201
     
-    if notification_result.status_code in range(200,300) and adoption_result.status_code in range(200, 300):
-        # Update the pet's application
-        pet_result = petApplicant(formData["petid"])
-        print(pet_result)
-        if pet_result:
-            return jsonify({
-                "code":201,
-                "message": 'Application processed successfully'
-            }), 201
+    return jsonify({
+        "code": 500,
+        "message": 'Failed to send confirmation email after retries'
+    }), 500
+    
+    # # If adoption_result is (200,300), send confirmation email
+    # if adoption_result.status_code in range(200, 300):
+    #     print('----Sending confirmation email to notification service -------')
+    #     notification_result = requests.post(url=notification_url, json=formData)
+    #     print(notification_result)
+    
+    # if notification_result.status_code in range(200,300) and adoption_result.status_code in range(200, 300):
+    #     # Update the pet's application
+    #     pet_result = petApplicant(formData["petid"])
+    #     print(pet_result)
+    #     if pet_result:
+    #         return jsonify({
+    #             "code":201,
+    #             "message": 'Application processed successfully'
+    #         }), 201
         
 def petApplicant(petid):
     pet_url = f'http://localhost:8082/add/{petid}'
