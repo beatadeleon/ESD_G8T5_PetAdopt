@@ -63,7 +63,7 @@ const filterApplications = (status) => {
 const updateStatus = async (application, status) => {
   try {
     const response = await fetch(`http://localhost:5400/accept_request`, {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
