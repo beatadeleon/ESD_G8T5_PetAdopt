@@ -36,44 +36,32 @@ export default {
           const userEmail = e.data.payload.invitee.email;
           const calendlyUuid = e.data.payload.uuid;
 
-          // Fetch the user ID from your backend
-          fetch('http://localhost:5100/get_user_id', {
+          // inside the event listener after the email and calendlyUuid are extracted
+
+          fetch('http://localhost:5100/update_calendly_uuid', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: userEmail })
+            body: JSON.stringify({ 
+              email: userEmail,
+              calendlyUuid: calendlyUuid
+            })
           })
-          .then(response => response.json())
-          .then(data => {
-            if (data.userId) {
-              // With the userId, send another request to update the booking
-              const updateRequestBody = {
-                userId: data.userId,
-                calendlyUuid: calendlyUuid
-              };
-
-              return fetch('http://localhost:5100/update_booking', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updateRequestBody)
-              });
-            } else {
-              throw new Error('User ID not found for the given email');
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok ' + response.statusText);
             }
+            return response.json();
           })
-          .then(updateResponse => updateResponse.json())
           .then(updateData => {
-            console.log("Booking updated with UUID: ", updateData);
+            console.log("Calendly UUID updated: ", updateData);
           })
           .catch((error) => {
-            console.error("Error updating the booking: ", error);
+            console.error("Error updating the Calendly UUID: ", error);
           });
-
         } catch (error) {
-          console.error("Error handling Calendly event:", error);
+          console.error("Error extracting the email and calendlyUuid: ", error);
         }
       }
     });

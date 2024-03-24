@@ -9,7 +9,7 @@ import requests
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 cred = credentials.Certificate('../petadopt-e0fe8-firebase-adminsdk-l81sh-f8914d3037.json')
 firebase_admin.initialize_app(cred, {
@@ -19,75 +19,44 @@ firebase_admin.initialize_app(cred, {
 
 CALENDLY_API_KEY = os.getenv('CALENDLY_API_KEY')
 CALENDLY_BASE_URL = 'https://api.calendly.com'
-# Client_ID = R123_M2QGWdULfOtg52H7Xlf9Xw3QgLhVwZblbROIIc
 
 
 
-@app.route("/get_user_id", methods=['POST'])
-def get_user_id():
+@app.route("/update_calendly_uuid", methods=['POST'])
+def update_calendly_uuid():
     if request.is_json:
         try:
             data = request.get_json()
-            user_email = data.get('email')
+            userEmail = data.get('email')
+            calendly_uuid = data.get('calendlyUuid')
 
-            if not user_email:
+            if not userEmail or not calendly_uuid:
                 return jsonify({
                     "code": 400,
-                    "message": "Missing email in the request"
+                    "message": "Missing email or calendlyUuid in the request"
                 }), 400
 
             users_ref = db.reference('users')
-            query_result = users_ref.order_by_child('email').equal_to(user_email).get()
+            query_result = users_ref.order_by_child('email').equal_to(userEmail).get()
 
-            user_id = None
-            for key, value in query_result.items():
-                if value['email'] == user_email:
-                    user_id = key
-                    break
-
-            if user_id:
-                return jsonify({
-                    "code": 200,
-                    "userId": user_id
-                }), 200
-            else:
+            if query_result:
+                for user_id, user_info in query_result.items():
+                    if user_info['email'] == userEmail:
+                        user_ref = db.reference(f'users/{user_id}')
+                        user_ref.update({'calendlyUuid': calendly_uuid})
+                        return jsonify({
+                            "code": 200,
+                            "message": "Calendly UUID updated successfully"
+                        }), 200
                 return jsonify({
                     "code": 404,
                     "message": "User not found"
                 }), 404
-
-        except Exception as e:
-            return jsonify({
-                "code": 500,
-                "message": "An error occurred: " + str(e)
-            }), 500
-    else:
-        return jsonify({
-            "code": 400,
-            "message": "Request must be JSON"
-        }), 400
-
-@app.route("/update_booking", methods=['POST'])
-def update_booking():
-    if request.is_json:
-        try:
-            data = request.get_json()
-            user_id = data.get('userId')
-            calendly_uuid = data.get('calendlyUuid')
-
-            if not user_id or not calendly_uuid:
+            else:
                 return jsonify({
-                    "code": 400,
-                    "message": "Missing userId or calendlyUuid in the request"
-                }), 400
-
-            user_ref = db.reference(f'/users/{user_id}')
-            user_ref.update({'calendlyUuid': calendly_uuid})
-
-            return jsonify({
-                "code": 200,
-                "message": "Booking updated successfully"
-            }), 200
+                    "code": 404,
+                    "message": "No users with the provided email"
+                }), 404
 
         except Exception as e:
             return jsonify({
