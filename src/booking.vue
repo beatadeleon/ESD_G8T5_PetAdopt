@@ -14,7 +14,6 @@ export default {
     script.src = 'https://assets.calendly.com/assets/external/widget.js';
     document.head.appendChild(script);
 
-    // Add an event listener to execute code once the script has finished loading
     script.onload = () => {
       // Use the API call to initialize the inline widget
       Calendly.initInlineWidget({
@@ -32,11 +31,8 @@ export default {
     window.addEventListener("message", async function (e) {
       if (isCalendlyEvent(e) && e.data.event === "calendly.event_scheduled") {
         try {
-          // Extract the email from the event payload
           const userEmail = e.data.payload.invitee.email;
           const calendlyUuid = e.data.payload.uuid;
-
-          // inside the event listener after the email and calendlyUuid are extracted
 
           fetch('http://localhost:5100/update_calendly_uuid', {
             method: 'POST',
