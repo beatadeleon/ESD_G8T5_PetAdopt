@@ -1,20 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
 import os, sys
-
-import requests
 from invokes import invoke_http
+from send_notifications import send_notifications
 
 app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-accept_URL = "http://localhost:5200/accept"
-shortlisted_URL = "http://localhost:5200/shortlist"
-rejected_URL = "http://localhost:5200/reject"
-applications_by_pet_URL= "http://localhost:5110/adoptionRequests/petId/{}"
-
 
 @app.route("/accept_request", methods=['POST'])
 def accept_request():
@@ -29,36 +22,24 @@ def accept_request():
             print("\n Application data in JSON:", application_data)
             
             # Get the new status data
-            new_status_data = request_data["status"]
-            print("\n New status data in JSON:", new_status_data)
+            new_status = request_data["status"]
+            print("\n New status data in JSON:", new_status)
 
             # Update adoption status
-            adoption_response = invoke_http(adoption_URL.format(application_data.get('requestId')), method='PUT', json={"status": new_status_data})
+            adoption_response =invoke_http(adoption_URL.format(application_data.get('requestId')), method='PUT', json={"status": new_status})
             print('Adoption response:', adoption_response)
 
             # Determine the notification URL based on the adoption status
-            status = request_data.get('status')
-            if status == 'pending':
-                notification_URL = shortlisted_URL
-            
-            elif status == 'confirmed':
-                notification_URL = accept_URL
-                #If confirmed, get all the applicants who applied for the same pet from adoptionForm.py, and reject them
-                print("This is the pet that's going to be adopted: ", application_data["petid"])
-                print("This is the successful requestId: ", application_data["requestId"])
-                reject_response = rejectApplicants(application_data["petid"], application_data["requestId"])
-                print(reject_response)
-            
-            
+            if new_status == 'pending' or new_status == 'rejected' or new_status == 'confirmed':
+                notification_response = send_notifications(application_data, new_status)
+                print('Notification response:', notification_response)
             else:
                 return jsonify({
                     "code": 400,
-                    "message": f"Invalid status: {status}"
+                    "message": f"Invalid status: {new_status}"
                 }), 400
 
-            # Send notification
-            notification_response = invoke_http(notification_URL, method='POST', json=application_data)
-            print('Notification response:', notification_response)
+            
 
             return jsonify({
                 "adoption_response": adoption_response,
@@ -81,22 +62,7 @@ def accept_request():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-# Get all the pet listings by petId, then update status to rejected for all applicants not the accepted
-def rejectApplicants(petid, accepted_requestId):
-    pet_applicants = invoke_http(applications_by_pet_URL.format(petid))
-    reject_notifications_list =[]
-    for application in pet_applicants["data"]:
-        if application["requestId"] != accepted_requestId:
-            # Change status 'pending' -> 'rejected'
-            reject_adoption_response = invoke_http(adoption_URL.format(application.get('requestId')), method='PUT', json={"status": "rejected"})
-            print("Rejected response:", reject_adoption_response)
-            reject_notifications_list.append(application)
-    # Batch process all rejected emails to notifications
-    notification_response = invoke_http(rejected_URL, method='POST', json=reject_notifications_list)
-    print('Notification response:', notification_response)
-
-            
-   
+  
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
