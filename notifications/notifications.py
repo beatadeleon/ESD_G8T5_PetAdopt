@@ -26,7 +26,7 @@ def confirm():
     pet = request.get_json()['pet']
     subject = 'Confirmation of adoption request'
     # Need to change to name of user, might need to retrieve from db
-    message = f"Hi {email}. This email is to confirm your adoption request for {pet}. You may view your application status on Pet Adopt"
+    message = f"Hi {email}. This email is to confirm your adoption request for {pet}. Please track your application regularly on the website"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.confirm', 
