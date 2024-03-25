@@ -8,8 +8,10 @@ app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
+requests_by_petid_URL = "http://localhost:5110/adoptionRequests/petid/{}"
 
 @app.route("/accept_request", methods=['POST'])
+
 def accept_request():
     if request.is_json:
         try:
@@ -30,16 +32,20 @@ def accept_request():
             print('Adoption response:', adoption_response)
 
             # Determine the notification URL based on the adoption status
-            if new_status == 'pending' or new_status == 'rejected' or new_status == 'confirmed':
+            if new_status == 'pending':
                 notification_response = send_notifications(application_data, new_status)
                 print('Notification response:', notification_response)
+            
+            # If confirmed -> send accept email to confirmed applicant, reject emails to other applicants
+            elif new_status == 'confirmed':
+                notification_response = send_notifications(application_data, new_status)
+                reject_response = notify_rejected_applicants(application_data["requestId"], application_data["petid"], "rejected")
+                print("Batch reject response: ", reject_response)
             else:
                 return jsonify({
                     "code": 400,
                     "message": f"Invalid status: {new_status}"
-                }), 400
-
-            
+                }), 400            
 
             return jsonify({
                 "adoption_response": adoption_response,
@@ -62,7 +68,27 @@ def accept_request():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-  
+# Batch rejection
+def notify_rejected_applicants(accepted_requestId, petid, status):
+    pet_applications = invoke_http(requests_by_petid_URL.format(petid))
+    reject = True
+    for application in pet_applications["data"]:
+        if application['requestId'] != accepted_requestId:
+            try:
+                reject_status = invoke_http(adoption_URL.format(application['requestId']), method='PUT', json={"status": status})
+                print("Rejection status update: ", reject_status)
+            except:
+                reject = False
+                return jsonify({"status": 500, "message": "Error updating reject status"})
+            try:
+                reject_response = send_notifications(application, status)
+                print("Rejection response: ", reject_response)
+            except:
+                reject = False
+                return jsonify({"status": 500, "message": "Error publishing rejection email"})
+    if reject == True:
+        return jsonify({"status": 201, "message": "Batch rejection successful"}), 201
+        
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
