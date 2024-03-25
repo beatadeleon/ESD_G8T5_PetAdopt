@@ -10,20 +10,29 @@ app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-accept_URL = "http://localhost:5500/accept"
-shortlisted_URL = "http://localhost:5500/shortlist"
-rejected_URL = "http://localhost:5500/reject"
+accept_URL = "http://localhost:5200/accept"
+shortlisted_URL = "http://localhost:5200/shortlist"
+rejected_URL = "http://localhost:5200/reject"
 
 
 @app.route("/accept_request", methods=['POST'])
 def accept_request():
     if request.is_json:
         try:
+            # Request is from adminDashboard. Data is in the form of {"application": ..., "status": ...}
             request_data = request.get_json()
             print("\nReceived a request in JSON:", request_data)
+            
+            # Get the application data
+            application_data = request_data["application"]
+            print("\n Application data in JSON:", application_data)
+            
+            # Get the new status data
+            new_status_data = request_data["status"]
+            print("\n New status data in JSON:", new_status_data)
 
             # Update adoption status
-            adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
+            adoption_response = invoke_http(adoption_URL.format(application_data.get('requestId')), method='PUT', json={"status": new_status_data})
             print('Adoption response:', adoption_response)
 
             # Determine the notification URL based on the adoption status
@@ -41,7 +50,7 @@ def accept_request():
                 }), 400
 
             # Send notification
-            notification_response = invoke_http(notification_URL, method='POST', json=request_data)
+            notification_response = invoke_http(notification_URL, method='POST', json=application_data)
             print('Notification response:', notification_response)
 
             return jsonify({

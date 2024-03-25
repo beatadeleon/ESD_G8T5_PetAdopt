@@ -62,12 +62,13 @@ const filterApplications = (status) => {
 
 const updateStatus = async (application, status) => {
   try {
-    const response = await fetch(`http://localhost:5110/adoptionRequests/${application.requestId}`, {
-      method: 'PUT',
+    const response = await fetch(`http://localhost:5400/accept_request`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ status })
+      body: JSON.stringify({"application": application,
+    "status": status})
     });
 
     if (response.ok) {
