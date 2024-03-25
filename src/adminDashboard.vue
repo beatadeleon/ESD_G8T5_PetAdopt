@@ -17,7 +17,6 @@
     <p><strong>Message:</strong> {{ application.message }}</p>
     <button v-if="application.status === 'open'" @click="updateStatus(application, 'pending')">Move to Pending</button>
     <button v-if="application.status === 'pending'" @click="updateStatus(application, 'confirmed')">Confirm</button>
-    <button v-if="application.status === 'pending'" @click="updateStatus(application, 'rejected')">Reject</button>
   </div>
 </div>
 </div>
@@ -74,6 +73,11 @@ const updateStatus = async (application, status) => {
     if (response.ok) {
       console.log(`Successfully updated status of application ${application.requestId} to ${status}`);
       application.status = status;
+
+      // Remove other rejected applications from the filteredApplications list
+      if (status === 'confirmed') {
+        filteredApplications.value = filteredApplications.value.filter(app => app.status !== 'rejected');
+      }
     } else {
       console.error('Failed to update status:', response.statusText);
     }

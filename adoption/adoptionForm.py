@@ -153,7 +153,7 @@ def get_all_rejected_applications():
             "message": "There are no applications."
         }), 404
 
-
+# Update application status using requestId
 @app.route("/adoptionRequests/<string:id>", methods=['PUT'])
 def update_application_status(id):
     data = request.json
@@ -170,6 +170,7 @@ def update_application_status(id):
     else:
         return jsonify({'error': 'Application not found.'}), 404
 
+# Get all requests by userId
 @app.route("/adoptionRequests/userId/<string:userId>")
 def get_listing_by_userId(userId):
     application_ref = root_ref.child('adoptionRequests')
@@ -192,8 +193,32 @@ def get_listing_by_userId(userId):
             "code": 404,
             "message": "There are no applications."
         }), 404
+        
+# Get all requests by petid
+@app.route("/adoptionRequests/petid/<string:petid>")
+def get_listing_by_petid(petid):
+    application_ref = root_ref.child('adoptionRequests')
+    applications = application_ref.get()
 
+    if applications:
+        pet_applications = [application for application in applications.values() if application.get('petid') == petid]
+        if pet_applications:
+            return jsonify({
+                "code": 200,
+                "data": pet_applications
+            })
+        else:
+            return jsonify({
+                "code": 404,
+                "message": f"No applications found for petid: {petid}"
+            }), 404
+    else:
+        return jsonify({
+            "code": 404,
+            "message": "There are no applications."
+        }), 404
 
+# Get request using requestId
 @app.route("/adoptionRequests/<string:id>")
 def find_application_by_id(id):
     application_ref = root_ref.child(f'adoptionRequests/{id}')
