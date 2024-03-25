@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-cancel_url ='http://localhost:5500/cancel'
+cancel_url ='http://localhost:5200/cancel'
 # booking_url
 
 @app.route("/cancel_request", methods=['POST'])
