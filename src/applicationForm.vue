@@ -126,6 +126,7 @@ const submitApplication = async () => {
       displayMessage.value = 'Application submitted successfully!';
     } else {
       console.error('Failed to submit application:', response.statusText);
+      displayMessage.value = "Failed to submit application"
       
     }
   } else {
