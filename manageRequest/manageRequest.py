@@ -1,28 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pika
-from pika.exceptions import AMQPConnectionError
 import os, sys
 import requests
+from send_notifications import send_notifications
 # from invokes import invoke_http
 
 app = Flask(__name__)
 CORS(app)
 
-exchangename = "test_email" 
-exchangetype="topic" 
-try:
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-    channel = connection.channel()
-    channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype, durable=True)
-except AMQPConnectionError as e:
-    print("Failed to establish connection to RabbitMQ:", str(e))
-    sys.exit(1)
-
-
 adoption_url = 'http://localhost:5110/submit_application'
-
-
 
 @app.route('/create_application', methods=['POST'])
 def submit_application():
@@ -50,23 +36,7 @@ def submit_application():
         "code": 400,
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
-
-# function to publish confirmation email to notifications service
-def send_notifications(formData):
-    email = formData['email']
-    name = formData['name']
-    pet = formData['pet']
-    subject = 'Confirmation of adoption request'
-    # Need to change to name of user, might need to retrieve from db
-    message = f"Hi {name}. This email is to confirm your adoption request for {pet}. Please track your application regularly on the website"
-    body = f"{subject}, {email}, {message}"
-    try:
-        channel.basic_publish(exchange=exchangename, routing_key=email+'.confirm', 
-                            body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return {'status':201, 'message': 'Confirmation email sent successfully'}
-    except AMQPConnectionError as e:
-        return "Failed to publish accept message due to connection error", str(e)               
-    
+                
 def createReq(formData):
     # POST request to Adoption service
     print('----Sending formData to adoption service-----')
@@ -76,7 +46,7 @@ def createReq(formData):
     # If adoption_result is (200,300), send confirmation email
     if adoption_result.status_code in range(200, 300):
             print('----Sending confirmation email to notification service -------')
-            notification_result = send_notifications(formData)
+            notification_result = send_notifications(formData, '')
             print(notification_result)
                     
     if notification_result['status'] == 201:
@@ -101,8 +71,7 @@ def petApplicant(petid):
     print(result.text) 
     return result
 
-    
-    
+        
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5300, debug=True)
