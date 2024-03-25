@@ -16,8 +16,7 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://petadopt-e0fe8-default-rtdb.asia-southeast1.firebasedatabase.app/'
 })
 
-
-CALENDLY_API_KEY = os.getenv('CALENDLY_API_KEY')
+CALENDLY_API_KEY = os.getenv('VUE_APP_CALENDLY_API_KEY')
 CALENDLY_BASE_URL = 'https://api.calendly.com'
 
 
@@ -29,6 +28,8 @@ def update_calendly_uuid():
             data = request.get_json()
             userEmail = data.get('email')
             calendly_uuid = data.get('calendlyUuid')
+
+            print("DEBUG:", type(data), data)
 
             if not userEmail or not calendly_uuid:
                 return jsonify({
@@ -76,15 +77,15 @@ def process_cancellation():
             request_data = request.get_json()
             print("\nReceived cancellation request data:", request_data)
 
-            user_id = request_data.get('userId')
-            if not user_id:
-                raise ValueError("userId is required.")
+            email = request_data.get('email')
+            if not email:
+                raise ValueError("email is required.")
 
-            ref = db.reference(f'users/{user_id}')
+            ref = db.reference(f'users/{email}')
             user_data = ref.get()
 
             if not user_data:
-                raise ValueError(f"User with userId {user_id} not found.")
+                raise ValueError(f"User with email {email} not found.")
 
             calendly_uuid = user_data.get('calendlyUuid')
 

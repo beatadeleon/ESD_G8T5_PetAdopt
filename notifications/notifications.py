@@ -23,10 +23,11 @@ except AMQPConnectionError as e:
 @app.route('/confirm', methods=['POST'])
 def confirm():
     email = request.get_json()['email']
+    name = request.get_json()['name']
     pet = request.get_json()['pet']
     subject = 'Confirmation of adoption request'
     # Need to change to name of user, might need to retrieve from db
-    message = f"Hi {email}. This email is to confirm your adoption request for {pet}. You may view your application status on Pet Adopt"
+    message = f"Hi {name}. This email is to confirm your adoption request for {pet}. Please track your application regularly on the website"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.confirm', 
@@ -39,9 +40,10 @@ def confirm():
 @app.route('/shortlist', methods=['POST'])
 def shortlist():
     email = request.get_json()['email']
+    name = request.get_json()['name']
     pet = request.get_json()['pet']
     subject = "You're shortlisted!"
-    message = f"Hi {email}. You're shortlisted to visit {pet}. Please book an appointment for us to assess your suitability"
+    message = f"Hi {name}. You're shortlisted to visit {pet}. Please book an appointment for us to assess your suitability"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.shortlist', 
@@ -54,9 +56,10 @@ def shortlist():
 @app.route('/accept', methods=['POST'])
 def accept():
     email = request.get_json()['email']
+    name = request.get_json()['name']
     pet = request.get_json()['pet']
     subject = "Good news! You're accepted!"
-    message = f"Hi {email}. Your application is successful. Please come down to pick up {pet}"
+    message = f"Hi {name}. Your application is successful. Please come down to pick up {pet}"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.accept', 
@@ -69,9 +72,10 @@ def accept():
 @app.route('/reject', methods=['POST'])
 def reject():
     email = request.get_json()['email']
+    name = request.get_json()['name']
     pet = request.get_json()['pet']
     subject = "Adoption request update"
-    message = f"Hi {email}. Your application for {pet} is unsuccessful. Thanks for your interest and you may apply for more pets"
+    message = f"Hi {name}. Your application for {pet} is unsuccessful. Thanks for your interest and you may apply for more pets"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.reject', 
@@ -84,9 +88,10 @@ def reject():
 @app.route('/cancel', methods=['POST'])
 def cancel():
     email = request.get_json()['email']
+    name = request.get_json()['name']
     pet = request.get_json()['pet']
     subject = "Adoption request update"
-    message = f"Hi {email}. Your application for {pet} has been succesfully cancelled. Thanks for your interest and you may apply for more pets"
+    message = f"Hi {name}. Your application for {pet} has been succesfully cancelled. Thanks for your interest and you may apply for more pets"
     body = f"{subject}, {email}, {message}"
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+'.cancel', 
