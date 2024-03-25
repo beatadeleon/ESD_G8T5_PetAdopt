@@ -12,12 +12,12 @@ def send_email(receiver_email, subject, message):
     port = 587  # For starttls
 
     # Email login credentials (update with your own)
-    username = "beatasanchax@gmail.com"
+    username = "beatasanchax@gmail.com "
     password = "mneh mxmf tyyz ftar"
 
     # Create a MIMEText object for the email content
     msg = MIMEMultipart()
-    msg['From'] = sender_email
+    msg['From'] = 'ESD G8T5 Pet Adopt <beatasanchax@gmail.com>'
     msg['To'] = receiver_email
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))

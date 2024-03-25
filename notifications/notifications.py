@@ -10,7 +10,6 @@ CORS(app, supports_credentials=True)
 exchangename = "test_email" # exchange name
 exchangetype = "topic" # use a 'topic' exchange to enable interaction
 
-# Create a connection and a channel to the broker to publish messages to activity_log, error queues
 try:
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
@@ -71,18 +70,21 @@ def accept():
 # SEND REJECT EMAIL
 @app.route('/reject', methods=['POST'])
 def reject():
-    email = request.get_json()['email']
-    name = request.get_json()['name']
-    pet = request.get_json()['pet']
-    subject = "Adoption request update"
-    message = f"Hi {name}. Your application for {pet} is unsuccessful. Thanks for your interest and you may apply for more pets"
-    body = f"{subject}, {email}, {message}"
     try:
-        channel.basic_publish(exchange=exchangename, routing_key=email+'.reject', 
-                              body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return jsonify({'status': 201, 'msg': 'REJECT NOTIFICATION SENT SUCCESSFULLY'}), 201
+        for application in request.get_json():
+            email = application['email']
+            name = application['name']
+            pet = application['pet']
+            subject = "Adoption request update"
+            message = f"Hi {name}. Your application for {pet} is unsuccessful. Thanks for your interest and you may apply for more pets"
+            body = f"{subject}, {email}, {message}"
+            channel.basic_publish(exchange=exchangename, routing_key=email+'.reject', 
+                                body=body, properties=pika.BasicProperties(delivery_mode=2))      
+        return jsonify({'status': 201, 'msg': 'REJECT NOTIFICATIONS SENT'}), 201
     except AMQPConnectionError as e:
         return "Failed to publish reject message due to connection error", str(e)
+    except Exception as e:
+        return jsonify({"status": 500, "message": "Failed to send rejection notifications and update applications"}), 500
 
 # SEND CANCEL EMAIL
 @app.route('/cancel', methods=['POST'])

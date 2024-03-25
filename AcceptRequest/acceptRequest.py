@@ -13,6 +13,7 @@ adoption_URL = "http://localhost:5110/adoptionRequests/{}"
 accept_URL = "http://localhost:5200/accept"
 shortlisted_URL = "http://localhost:5200/shortlist"
 rejected_URL = "http://localhost:5200/reject"
+applications_by_pet_URL= "http://localhost:5110/adoptionRequests/petId/{}"
 
 
 @app.route("/accept_request", methods=['POST'])
@@ -39,10 +40,16 @@ def accept_request():
             status = request_data.get('status')
             if status == 'pending':
                 notification_URL = shortlisted_URL
-            elif status == 'rejected':
-                notification_URL = rejected_URL
+            
             elif status == 'confirmed':
                 notification_URL = accept_URL
+                #If confirmed, get all the applicants who applied for the same pet from adoptionForm.py, and reject them
+                print("This is the pet that's going to be adopted: ", application_data["petid"])
+                print("This is the successful requestId: ", application_data["requestId"])
+                reject_response = rejectApplicants(application_data["petid"], application_data["requestId"])
+                print(reject_response)
+            
+            
             else:
                 return jsonify({
                     "code": 400,
@@ -74,6 +81,22 @@ def accept_request():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
+# Get all the pet listings by petId, then update status to rejected for all applicants not the accepted
+def rejectApplicants(petid, accepted_requestId):
+    pet_applicants = invoke_http(applications_by_pet_URL.format(petid))
+    reject_notifications_list =[]
+    for application in pet_applicants["data"]:
+        if application["requestId"] != accepted_requestId:
+            # Change status 'pending' -> 'rejected'
+            reject_adoption_response = invoke_http(adoption_URL.format(application.get('requestId')), method='PUT', json={"status": "rejected"})
+            print("Rejected response:", reject_adoption_response)
+            reject_notifications_list.append(application)
+    # Batch process all rejected emails to notifications
+    notification_response = invoke_http(rejected_URL, method='POST', json=reject_notifications_list)
+    print('Notification response:', notification_response)
+
+            
+   
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
