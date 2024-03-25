@@ -13,6 +13,7 @@ import { auth } from './firebaseConfig';
           <p>Email: {{ request.email }}</p>
           <p>Status: {{ request.status }}</p>
           <!-- Add more details as needed -->
+          <button v-if="application.status !== 'cancelled'" @click="cancelRequest(application.requestId)">Cancel Request</button>
           <router-link to="/booking" v-if="request.status === 'pending'">Book</router-link>
 
 
@@ -55,6 +56,32 @@ import { auth } from './firebaseConfig';
         this.isLoading = false;
       }
     },
+    methods: {
+      async cancelRequest(requestId) {
+        try {
+          const response = await fetch('http://localhost:5100/cancel_request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              requestId,
+              status: 'cancelled'
+            })
+          });
+          if (!response.ok) {
+            throw new Error('Failed to cancel request');
+          }
+          const data = await response.json();
+          console.log(data);
+          // Reload the page after successfully canceling the request
+          window.location.reload();
+        } catch (error) {
+          console.error('Error cancelling request:', error);
+          // Optionally show error message to user
+        }
+      }
+    }
   };
   </script>
   
