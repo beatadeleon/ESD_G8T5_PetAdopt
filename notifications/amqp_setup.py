@@ -4,7 +4,7 @@ from os import environ
 
 hostname = "localhost" # default hostname
 port = 5672            # default port
-exchangename = "test_email" # exchange name
+exchangename = "notifications" # exchange name
 exchangetype = "topic" # - use a 'topic' exchange to enable interaction
 
 
@@ -53,25 +53,25 @@ def create_channel(connection):
 #function to create queues
 def create_queues(channel):
     print('amqp_setup:create queues')
-    create_confirmation_queue(channel)
-    create_shortlist_queue(channel)
+    create_open_queue(channel)
+    create_pending_queue(channel)
     create_accept_queue(channel)
     create_reject_queue(channel)
     create_cancel_queue(channel)
 
 # function to create accept queue  
-def create_confirmation_queue(channel):
-    print('amqp_setup:create confirmation queue')
-    confirm_queue_name = 'confirm'
-    channel.queue_declare(queue=confirm_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
-    channel.queue_bind(exchange=exchangename, queue=confirm_queue_name, routing_key='#.confirm')
+def create_open_queue(channel):
+    print('amqp_setup:create open queue')
+    o_queue_name = 'open'
+    channel.queue_declare(queue=o_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
+    channel.queue_bind(exchange=exchangename, queue=o_queue_name, routing_key='#.open')
 
-# function to create shortlist queue  
-def create_shortlist_queue(channel):
-    print('amqp_setup:create shortlist queue')
-    s_queue_name = 'shortlist'
-    channel.queue_declare(queue=s_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
-    channel.queue_bind(exchange=exchangename, queue=s_queue_name, routing_key='#.shortlist')
+# function to create pending queue  
+def create_pending_queue(channel):
+    print('amqp_setup:create pending queue')
+    p_queue_name = 'pending'
+    channel.queue_declare(queue=p_queue_name, durable=True) # 'durable' makes the queue survive broker restarts
+    channel.queue_bind(exchange=exchangename, queue=p_queue_name, routing_key='#.pending')
 
 # function to create accept queue  
 def create_accept_queue(channel):

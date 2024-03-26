@@ -107,17 +107,17 @@ def get_all_pending_applications():
             "message": "There are no applications."
         }), 404
     
-@app.route("/adoptionRequests/confirmed")
+@app.route("/adoptionRequests/accept")
 def get_all_confirmed_applications():
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
     if applications:
-        confirmed_applications = [application for application in applications.values() if application.get('status') == 'confirmed']
-        if confirmed_applications:
+        accept_applications = [application for application in applications.values() if application.get('status') == 'accept']
+        if accept_applications:
             return jsonify({
                 "code": 200,
-                "data": confirmed_applications
+                "data": accept_applications
             })
         else:
             return jsonify({
@@ -130,17 +130,17 @@ def get_all_confirmed_applications():
             "message": "There are no applications."
         }), 404
     
-@app.route("/adoptionRequests/rejected")
+@app.route("/adoptionRequests/reject")
 def get_all_rejected_applications():
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
     if applications:
-        rejected_applications = [application for application in applications.values() if application.get('status') == 'rejected']
-        if rejected_applications:
+        reject_applications = [application for application in applications.values() if application.get('status') == 'reject']
+        if reject_applications:
             return jsonify({
                 "code": 200,
-                "data": rejected_applications
+                "data": reject_applications
             })
         else:
             return jsonify({

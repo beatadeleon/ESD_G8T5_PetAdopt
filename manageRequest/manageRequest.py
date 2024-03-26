@@ -46,7 +46,7 @@ def createReq(formData):
     # If adoption_result is (200,300), send confirmation email
     if adoption_result.status_code in range(200, 300):
             print('----Sending confirmation email to notification service -------')
-            notification_result = send_notifications(formData, '')
+            notification_result = send_notifications(formData, 'open')
             print(notification_result)
                     
     if notification_result['status'] == 201:
