@@ -59,6 +59,8 @@ import { auth } from './firebaseConfig';
     methods: {
       async cancelRequest(requestId) {
         try {
+          const currentUser = auth.currentUser;
+
           const response = await fetch('http://localhost:5100/cancel_request', {
             method: 'POST',
             headers: {
@@ -66,7 +68,8 @@ import { auth } from './firebaseConfig';
             },
             body: JSON.stringify({
               requestId,
-              status: 'cancelled'
+              status: 'cancelled',
+              email: currentUser.email
             })
           });
           if (!response.ok) {
@@ -74,8 +77,24 @@ import { auth } from './firebaseConfig';
           }
           const data = await response.json();
           console.log(data);
+
+          // // call booking.py to cancel booking
+          // const otherResponse = await fetch('http://localhost:5600/process_cancellation', {
+          //   method: 'POST',
+          //   headers: {
+          //     'Content-Type': 'application/json'
+          //   },
+          //   body: JSON.stringify({
+          //     email: currentUser.email
+          //   })
+          // });
+          // if (!otherResponse.ok) {
+          //   throw new Error('Failed to cancel booking');
+          // }
+
           // Reload the page after successfully canceling the request
           window.location.reload();
+
         } catch (error) {
           console.error('Error cancelling request:', error);
           // Optionally show error message to user
