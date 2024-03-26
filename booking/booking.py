@@ -77,16 +77,18 @@ def process_cancellation():
             request_data = request.get_json()
             print("\nReceived cancellation request data:", request_data)
 
+            # receive email from request
             email = request_data.get('email')
             if not email:
                 raise ValueError("email is required.")
 
+            # get user data from firebase, check if user exists
             ref = db.reference(f'users/{email}')
             user_data = ref.get()
-
             if not user_data:
                 raise ValueError(f"User with email {email} not found.")
 
+            # get calendlyUuid from user data (from firebase)
             calendly_uuid = user_data.get('calendlyUuid')
 
             if calendly_uuid and calendly_uuid != "null":
@@ -118,4 +120,4 @@ def process_cancellation():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5100, debug=True)
+    app.run(host='0.0.0.0', port=5600, debug=True)
