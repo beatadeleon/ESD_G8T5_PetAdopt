@@ -4,8 +4,8 @@
     <div>
       <button @click="filterApplications('open')">Open</button>
       <button @click="filterApplications('pending')">Pending</button>
-      <button @click="filterApplications('confirmed')">Confirmed</button>
-      <button @click="filterApplications('rejected')">Rejected</button>
+      <button @click="filterApplications('accept')">Accept</button>
+      <button @click="filterApplications('reject')">Reject</button>
     </div>
     <h2>{{ filteredStatus }}</h2>
     <div class="card-container">
@@ -16,7 +16,7 @@
     <p><strong>Pet:</strong> {{ application.pet }}</p>
     <p><strong>Message:</strong> {{ application.message }}</p>
     <button v-if="application.status === 'open'" @click="updateStatus(application, 'pending')">Move to Pending</button>
-    <button v-if="application.status === 'pending'" @click="updateStatus(application, 'confirmed')">Confirm</button>
+    <button v-if="application.status === 'pending'" @click="updateStatus(application, 'accept')">Accept</button>
   </div>
 </div>
 </div>

@@ -2,7 +2,7 @@ import pika
 from pika.exceptions import AMQPConnectionError
 import os, sys
 
-exchangename = "test_email" 
+exchangename = "notifications" 
 exchangetype="topic" 
 try:
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -18,7 +18,7 @@ def send_notifications(application_data, status):
     name = application_data['name']
     pet = application_data['pet']
     
-    if status == '':
+    if status == 'open':
         subject = 'Confirmation of adoption request'
         message = f"Hi {name}. This email is to confirm your adoption request for {pet}. Please track your application regularly on the website"
         
@@ -26,7 +26,7 @@ def send_notifications(application_data, status):
         subject = "You're shortlisted!"
         message = f"Hi {name}. You're shortlisted to visit {pet}. Please book an appointment for us to assess your suitability"
         
-    elif status == 'confirmed':
+    elif status == 'accept':
         subject = "Good news! You're accepted!"
         message = f"Hi {name}. Your application is successful. Please come down to pick up {pet}" 
            
@@ -37,7 +37,7 @@ def send_notifications(application_data, status):
     # Reject: batch processing
     body = f"{subject}, {email}, {message}"
     try:
-        channel.basic_publish(exchange=exchangename, routing_key=email+'.confirm', 
+        channel.basic_publish(exchange=exchangename, routing_key=email+f'.{status}', 
                             body=body, properties=pika.BasicProperties(delivery_mode=2))
         return {'status':201, 'message': f'{status} email sent successfully'}
     except AMQPConnectionError as e:

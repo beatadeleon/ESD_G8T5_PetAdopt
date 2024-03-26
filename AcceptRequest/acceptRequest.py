@@ -37,9 +37,9 @@ def accept_request():
                 print('Notification response:', notification_response)
             
             # If confirmed -> send accept email to confirmed applicant, reject emails to other applicants
-            elif new_status == 'confirmed':
+            elif new_status == 'accept':
                 notification_response = send_notifications(application_data, new_status)
-                reject_response = notify_rejected_applicants(application_data["requestId"], application_data["petid"], "rejected")
+                reject_response = notify_rejected_applicants(application_data["requestId"], application_data["petid"], "reject")
                 print("Batch reject response: ", reject_response)
             else:
                 return jsonify({
