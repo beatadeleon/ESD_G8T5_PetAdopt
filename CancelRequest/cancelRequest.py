@@ -22,7 +22,6 @@ def cancel_request():
         try:
 
             request_data = request.get_json().get("request")
-
             print(request_data)
 
             print("\nReceived a request in JSON:", request_data)
