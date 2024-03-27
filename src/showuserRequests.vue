@@ -77,21 +77,7 @@ import { auth } from './firebaseConfig';
           }
           const data = await response.json();
           console.log(data);
-
-          // // call booking.py to cancel booking
-          // const otherResponse = await fetch('http://localhost:5600/process_cancellation', {
-          //   method: 'POST',
-          //   headers: {
-          //     'Content-Type': 'application/json'
-          //   },
-          //   body: JSON.stringify({
-          //     email: currentUser.email
-          //   })
-          // });
-          // if (!otherResponse.ok) {
-          //   throw new Error('Failed to cancel booking');
-          // }
-
+          
           // Reload the page after successfully canceling the request
           window.location.reload();
 

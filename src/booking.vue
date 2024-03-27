@@ -35,8 +35,12 @@ export default {
 
           const calendlyApiKey = process.env.VUE_APP_CALENDLY_API_KEY;
 
+          // const uri = e.data.payload.invitee.uri;
           const uri = e.data.payload.event.uri;
           const calendlyUuid = uri.split('/').pop();  // splits the URI by '/' and gets the last segment
+
+          console.log(e)
+          console.log("Calendly UUID: ", calendlyUuid);
 
           // Use fetch to send a GET req to e.data.payload.invitee.uri
           // let userEmail = "";

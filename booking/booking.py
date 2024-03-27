@@ -82,21 +82,6 @@ def process_cancellation():
             if not email:
                 raise ValueError("email is required.")
 
-            # # get user data from firebase, check if user exists
-            # ref = db.reference(email)
-            # user_data = ref.get()
-            # if not user_data:
-            #     raise ValueError(f"User with email {email} not found.")
-            
-            # # Assuming you have a variable `email` that contains the email address
-            # safe_email = email.replace('.', ',')
-
-            # # Then use that safe_email to create the Firebase reference
-            # ref = db.reference(f'users/{safe_email}')
-            # user_data = ref.get()
-            # if not user_data:
-            #     raise ValueError(f"User with email {email} not found.")
-
             # Get all users from Firebase
             ref = db.reference('users')
             users_data = ref.get()
@@ -106,30 +91,24 @@ def process_cancellation():
             for user_id, user_info in users_data.items():
                 if user_info.get('email') == email:
                     user_data = user_info
-                    break
+                    calendly_uuid = user_data.get('calendlyUuid')
 
+                    if calendly_uuid != "null":
+                        user_ref = db.reference(f'users/{user_id}')
+                        user_ref.update({'calendlyUuid': 'null'})
+
+                        cancel_booking_response = requests.post(
+                        f"{CALENDLY_BASE_URL}/scheduled_events/{calendly_uuid}/cancellation",
+                        headers={"Authorization": f"Bearer {CALENDLY_API_KEY}"}
+                        )
+
+                        if cancel_booking_response.status_code == 201:
+                            print("Calendly booking cancelled successfully.")
+                        else:
+                            raise Exception(f"Failed to cancel Calendly booking: {cancel_booking_response.text}")
+                
             if not user_data:
                 raise ValueError(f"User with email {email} not found.")
-
-            # get calendlyUuid from user data (from firebase)
-            calendly_uuid = user_data.get('calendlyUuid')
-
-            if calendly_uuid and calendly_uuid != "null":
-                ref.update({'calendlyUuid': "null"})
-
-                cancel_booking_response = requests.delete(
-                    f"{CALENDLY_BASE_URL}/scheduled_events/{calendly_uuid}/cancellation",
-                    headers={"Authorization": f"Bearer {CALENDLY_API_KEY}"}
-                )
-
-                if cancel_booking_response.status_code == 204:
-                    print("Calendly booking cancelled successfully.")
-                else:
-                    raise Exception(f"Failed to cancel Calendly booking: {cancel_booking_response.text}")
-
-                return jsonify({"message": "Booking cancellation processed successfully."}), 200
-            else:
-                return jsonify({"message": "No booking to cancel."}), 200
 
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
