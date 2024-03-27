@@ -10,15 +10,22 @@ app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-# cancel_url ='http://localhost:5500/cancel'
-# booking_url
+
+
 
 @app.route("/cancel_request", methods=['POST'])
 def cancel_request():
     # Simple check of input format and data of the request are JSON
+
+    # ehe
     if request.is_json:
         try:
+
             request_data = request.get_json().get("request")
+=======
+            request_data = request.get_json()
+            print(request_data)
+
             print("\nReceived a request in JSON:", request_data)
 
             # Update adoption status
@@ -29,9 +36,20 @@ def cancel_request():
             notification_response = send_notifications(request_data, "cancel")
             print('Notification response', notification_response)
 
+            # # Send cancellation request to booking service
+            # email = request_data.get('email') 
+            # cancel_booking_response = invoke_http(
+            #     'http://localhost:5600/process_cancellation',
+            #     method='POST',
+            #     json={'email': email}
+            # )
+            # print('Cancel booking response:', cancel_booking_response)
+
             return jsonify({
+                "code": 200,
                 "adoption_response": adoption_response,
                 "notification_response": notification_response
+
             }), 200
 
         except Exception as e:
