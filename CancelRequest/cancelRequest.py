@@ -16,6 +16,8 @@ cancel_booking_url = 'http://localhost:5600/process_cancellation'
 @app.route("/cancel_request", methods=['POST'])
 def cancel_request():
     # Simple check of input format and data of the request are JSON
+
+    # ehe
     if request.is_json:
         try:
             request_data = request.get_json()
