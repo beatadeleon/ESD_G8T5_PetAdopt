@@ -5,13 +5,13 @@ import os, sys
 
 import requests
 from invokes import invoke_http
-
+from send_notifications import send_notifications
 app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-cancel_url ='http://localhost:5500/cancel'
-cancel_booking_url = 'http://localhost:5600/process_cancellation'
+
+
 
 @app.route("/cancel_request", methods=['POST'])
 def cancel_request():
@@ -20,23 +20,21 @@ def cancel_request():
     # ehe
     if request.is_json:
         try:
+
+            request_data = request.get_json().get("request")
+=======
             request_data = request.get_json()
             print(request_data)
+
             print("\nReceived a request in JSON:", request_data)
 
             # Update adoption status
-            adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
+            adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json={"status": "cancel"})
             print('Adoption response:', adoption_response)
 
-            #Body:
-            # {
-            #    "requestId": "-NtFFI_b7qhOQDT4LR-c",
-            #    "status": "cancelled"
-            # }
-
             # Send notification
-            notification_response = invoke_http(cancel_url, method='POST', json=request_data)
-            print('Notification response:', notification_response)
+            notification_response = send_notifications(request_data, "cancel")
+            print('Notification response', notification_response)
 
             # # Send cancellation request to booking service
             # email = request_data.get('email') 
@@ -50,8 +48,8 @@ def cancel_request():
             return jsonify({
                 "code": 200,
                 "adoption_response": adoption_response,
-                "notification_response": notification_response,
-                # "cancel_booking_response": cancel_booking_response 
+                "notification_response": notification_response
+
             }), 200
 
         except Exception as e:
