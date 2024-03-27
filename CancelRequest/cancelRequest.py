@@ -38,20 +38,20 @@ def cancel_request():
             notification_response = invoke_http(cancel_url, method='POST', json=request_data)
             print('Notification response:', notification_response)
 
-            # # Send cancellation request to booking service
-            # email = request_data.get('email') 
-            # cancel_booking_response = invoke_http(
-            #     'http://localhost:5600/process_cancellation',
-            #     method='POST',
-            #     json={'email': email}
-            # )
-            # print('Cancel booking response:', cancel_booking_response)
+            # Send cancellation request to booking service
+            email = request_data.get('email') 
+            cancel_booking_response = invoke_http(
+                'http://localhost:5600/process_cancellation',
+                method='POST',
+                json={'email': email}
+            )
+            print('Cancel booking response:', cancel_booking_response)
 
             return jsonify({
                 "code": 200,
                 "adoption_response": adoption_response,
                 "notification_response": notification_response,
-                # "cancel_booking_response": cancel_booking_response 
+                "cancel_booking_response": cancel_booking_response 
             }), 200
 
         except Exception as e:

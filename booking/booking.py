@@ -82,9 +82,32 @@ def process_cancellation():
             if not email:
                 raise ValueError("email is required.")
 
-            # get user data from firebase, check if user exists
-            ref = db.reference(f'users/{email}')
-            user_data = ref.get()
+            # # get user data from firebase, check if user exists
+            # ref = db.reference(email)
+            # user_data = ref.get()
+            # if not user_data:
+            #     raise ValueError(f"User with email {email} not found.")
+            
+            # # Assuming you have a variable `email` that contains the email address
+            # safe_email = email.replace('.', ',')
+
+            # # Then use that safe_email to create the Firebase reference
+            # ref = db.reference(f'users/{safe_email}')
+            # user_data = ref.get()
+            # if not user_data:
+            #     raise ValueError(f"User with email {email} not found.")
+
+            # Get all users from Firebase
+            ref = db.reference('users')
+            users_data = ref.get()
+
+            # Find the user by email
+            user_data = None
+            for user_id, user_info in users_data.items():
+                if user_info.get('email') == email:
+                    user_data = user_info
+                    break
+
             if not user_data:
                 raise ValueError(f"User with email {email} not found.")
 
@@ -95,7 +118,7 @@ def process_cancellation():
                 ref.update({'calendlyUuid': "null"})
 
                 cancel_booking_response = requests.delete(
-                    f"{CALENDLY_BASE_URL}scheduled_events/{calendly_uuid}/cancellation",
+                    f"{CALENDLY_BASE_URL}/scheduled_events/{calendly_uuid}/cancellation",
                     headers={"Authorization": f"Bearer {CALENDLY_API_KEY}"}
                 )
 
