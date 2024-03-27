@@ -46,8 +46,6 @@ def cancel_request():
             return jsonify({
                 "code": 200,
                 "adoption_response": adoption_response,
-                "notification_response": notification_response
-
                 "notification_response": notification_response,
                 "cancel_booking_response": cancel_booking_response 
             }), 200
