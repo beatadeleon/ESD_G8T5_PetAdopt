@@ -32,6 +32,7 @@ def send_notifications(application_data, status):
            
     elif status == 'reject':
         subject = "Adoption request update"
+        message = f"Hi {name}. Your application for {pet} is unsuccessful. Thanks for your interest and you may apply for more pets"
     
     else:
         subject = 'Sorry to see you go!'
