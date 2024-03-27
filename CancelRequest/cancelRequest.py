@@ -5,12 +5,12 @@ import os, sys
 
 import requests
 from invokes import invoke_http
-
+from send_notifications import send_notifications
 app = Flask(__name__)
 CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-cancel_url ='http://localhost:5500/cancel'
+# cancel_url ='http://localhost:5500/cancel'
 # booking_url
 
 @app.route("/cancel_request", methods=['POST'])
@@ -18,26 +18,20 @@ def cancel_request():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
-            request_data = request.get_json()
+            request_data = request.get_json().get("request")
             print("\nReceived a request in JSON:", request_data)
 
             # Update adoption status
-            adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json=request_data)
+            adoption_response = invoke_http(adoption_URL.format(request_data.get('requestId')), method='PUT', json={"status": "cancel"})
             print('Adoption response:', adoption_response)
 
-            #Body:
-            # {
-            #    "requestId": "-NtFFI_b7qhOQDT4LR-c",
-            #    "status": "cancelled"
-            # }
-
             # Send notification
-            notification_response = invoke_http(cancel_url, method='POST', json=request_data)
-            print('Notification response:', notification_response)
+            notification_response = send_notifications(request_data, "cancel")
+            print('Notification response', notification_response)
 
             return jsonify({
                 "adoption_response": adoption_response,
-                # "notification_response": notification_response
+                "notification_response": notification_response
             }), 200
 
         except Exception as e:
