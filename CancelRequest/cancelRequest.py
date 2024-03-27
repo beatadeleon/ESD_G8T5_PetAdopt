@@ -19,6 +19,7 @@ def cancel_request():
     if request.is_json:
         try:
             request_data = request.get_json()
+            print(request_data)
             print("\nReceived a request in JSON:", request_data)
 
             # Update adoption status

@@ -13,7 +13,7 @@ import { auth } from './firebaseConfig';
           <p>Email: {{ request.email }}</p>
           <p>Status: {{ request.status }}</p>
           <!-- Add more details as needed -->
-          <button v-if="request.status !== 'cancel'" @click="cancelRequest(application.requestId)">Cancel Request</button>
+          <button v-if="request.status !== 'cancel'" @click="cancelRequest(request.requestId)">Cancel Request</button>
           <router-link to="/booking" v-if="request.status === 'pending'">Book</router-link>
 
 
@@ -47,6 +47,7 @@ import { auth } from './firebaseConfig';
         const data = await response.json();
         if (data.code === 200) {
           this.adoptionRequests = data.data;
+          console.log(this.adoptionRequests)
         } else {
           throw new Error(data.message || 'Failed to fetch adoption requests');
         }
