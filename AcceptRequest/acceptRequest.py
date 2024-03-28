@@ -9,7 +9,7 @@ CORS(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
 requests_by_petid_URL = "http://localhost:5110/adoptionRequests/petid/{}"
-
+remove_pet_URL = "http://localhost:8082/remove/{}"
 @app.route("/accept_request", methods=['POST'])
 
 def accept_request():
@@ -40,6 +40,7 @@ def accept_request():
             elif new_status == 'accept':
                 notification_response = send_notifications(application_data, new_status)
                 reject_response = notify_rejected_applicants(application_data["requestId"], application_data["petid"], "reject")
+                remove_pet_response = invoke_http(remove_pet_URL.format(application_data.get('petid')), method='DELETE')
                 print("Batch reject response: ", reject_response)
             else:
                 return jsonify({
@@ -49,7 +50,8 @@ def accept_request():
 
             return jsonify({
                 "adoption_response": adoption_response,
-                "notification_response": notification_response
+                "notification_response": notification_response,
+                "remove_pet_response": remove_pet_response
             }), 200
 
         except Exception as e:

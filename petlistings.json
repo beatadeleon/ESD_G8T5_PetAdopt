@@ -39,7 +39,18 @@
         "description": "Rocky is a loyal and protective German Shepherd who enjoys long walks.",
         "image": "https://d.newsweek.com/en/full/2201052/dog.jpg?w=1600&h=1200&q=88&f=56687919043018e29fc48209d009e5ca",
         "applicants": 0
+      },
+      "listing5": {
+        "name": "Stinky",
+        "type": "Racoon",
+        "age": 4,
+        "gender": "Male",
+        "breed": "Racoon",
+        "description": "Stinky is a sticky and lovable racoon who enjoys eating trash.",
+        "image": "https://i.pinimg.com/564x/17/60/61/1760615841b11edd46368731f1eeb2a0.jpg",
+        "applicants": 0
       }
+      
     }
   }
   

@@ -8,9 +8,10 @@
       <div class="pet-card" v-for="pet in petData" :key="pet.name">
         <h2>{{ pet.name }}</h2>
         <img :src="pet.image" alt="Pet Image" style="max-width: 100%;">
-        <p>Species: {{ pet.species }}</p>
+        <p>Species: {{ pet.type }}</p>
         <p>Age: {{ pet.age }}</p>
         <p>Breed: {{ pet.breed }}</p>
+        <p>Description: {{ pet.description }}</p>
         <p>Number of applicants: {{pet.applicants}}</p>
       </div>
     </div>

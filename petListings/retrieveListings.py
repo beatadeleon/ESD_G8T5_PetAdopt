@@ -15,7 +15,7 @@ app.config['SWAGGER'] = {
     'title': 'Pet listings API',
     'version': 1.0,
     "openapi": "3.0.2",
-    'description': 'Retrieves pet listings, add applicant to a pet listing, remove applicant from a pet listing'
+    'description': 'Retrieves pet listings, add applicant to a pet listing, remove applicant from a pet listing, remove a pet listing once adopted'
 }
 swagger = Swagger(app)
 
@@ -89,7 +89,7 @@ def find_listing_by_id(id):
         }), 404
 
 # add applicant
-@app.route("/add/<string:id>", methods=['PUT'])
+@app.route("/add_applicants/<string:id>", methods=['PUT'])
 def add_applicant(id):
     """
     Add an applicant to a pet listing
@@ -124,7 +124,7 @@ def add_applicant(id):
 
    
 # remove applicant
-@app.route("/remove/<string:id>", methods=['PUT'])
+@app.route("/remove_applicants/<string:id>", methods=['PUT'])
 def remove_applicant(id):
     """
     Remove an applicant from a pet listing
@@ -156,6 +156,36 @@ def remove_applicant(id):
             return jsonify({
                 'message': f'REMOVE success. New applicant number for {id}: {new_applicants}'
             }), 200
+    except Exception as e:
+        return jsonify({'code': 500, 'message': f'Internal server error: {str(e)}'}), 500
+
+
+# remove pet once they are adopted
+@app.route("/remove/<string:id>", methods=['DELETE'])
+def remove_pet(id):
+    """
+    Remove a pet listing once pet is adopted
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: The ID of the pet listing
+    responses:
+      200:
+        description: Success message
+      404:
+        description: Listing not found
+    """
+    listings_ref = root_ref.child('petListings')
+    document_ref = listings_ref.child(id)
+    try:
+        document_ref.delete()
+        return jsonify({
+            'message': f'Successfully removed pet {id}!'
+        }), 200
+        
     except Exception as e:
         return jsonify({'code': 500, 'message': f'Internal server error: {str(e)}'}), 500
 

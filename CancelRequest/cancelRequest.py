@@ -43,7 +43,7 @@ def cancel_request():
             print('Cancel booking response:', cancel_booking_response)
             
             # Update the pet application number
-            pet_url = 'http://localhost:8082/remove/{}'.format(request_data.get('petid'))
+            pet_url = 'http://localhost:8082/remove_applicants/{}'.format(request_data.get('petid'))
             pet_applicant_response = invoke_http(
                 pet_url,
                 method='PUT'

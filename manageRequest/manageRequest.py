@@ -65,7 +65,7 @@ def createReq(formData):
     }), 500
         
 def petApplicant(petid):
-    pet_url = f'http://localhost:8082/add/{petid}'
+    pet_url = f'http://localhost:8082/add_applicants/{petid}'
     result = requests.put(url=pet_url)
     print(result.status_code)
     print(result.text) 
