@@ -75,8 +75,8 @@ const updateStatus = async (application, status) => {
       application.status = status;
 
       // Remove other rejected applications from the filteredApplications list
-      if (status === 'confirmed') {
-        filteredApplications.value = filteredApplications.value.filter(app => app.status !== 'rejected');
+      if (status === 'accept') {
+        filteredApplications.value = filteredApplications.value.filter(app => app.status !== 'reject');
       }
     } else {
       console.error('Failed to update status:', response.statusText);

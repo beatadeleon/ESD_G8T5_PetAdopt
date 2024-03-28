@@ -38,11 +38,17 @@ def send_notifications(application_data, status):
     
     # Reject: batch processing
     body = f"{subject}, {email}, {message}"
-    try:
-        channel.basic_publish(exchange=exchangename, routing_key=email+f'.{status}', 
-                            body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return {'status':201, 'message': f'{status} email sent successfully'}
-    except AMQPConnectionError as e:
-        return "Failed to publish accept message due to connection error", str(e)
+    
+    # Retry logic
+    max_retries = 3
+    for attempt in range(1, max_retries + 1):
+        try:
+            channel.basic_publish(exchange=exchangename, routing_key=email+f'.{status}', 
+                                body=body, properties=pika.BasicProperties(delivery_mode=2))
+            return {'status':201, 'message': f'{status} email sent successfully after {attempt} attempts'}
+        except AMQPConnectionError as e:
+            print(f"Attempt {attempt}: Failed to publish {status} message due to connection error")
+            if attempt == max_retries:
+                return "Failed to publish message after maximum retry attempts", str(e)
     
     
