@@ -5,11 +5,19 @@ from firebase_admin import credentials, db
 from dotenv import load_dotenv
 import os
 
-
+from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app)
 
+# Initialize flasgger 
+app.config['SWAGGER'] = {
+    'title': 'Pet listings API',
+    'version': 1.0,
+    "openapi": "3.0.2",
+    'description': 'Retrieves pet listings, add applicant to a pet listing, remove applicant from a pet listing'
+}
+swagger = Swagger(app)
 
 # Load environment variables
 load_dotenv()
@@ -25,6 +33,13 @@ root_ref = db.reference()
 
 @app.route("/petListings")
 def get_all_listings():
+    """
+    Retrieve all pet listings
+    ---
+    responses:
+      200:
+        description: A list of all pet listings
+    """
     listings_ref = root_ref.child('petListings')
     listings = listings_ref.get()
     
@@ -44,6 +59,21 @@ def get_all_listings():
 # id is listing1,listing2 etc.
 @app.route("/petListings/<string:id>")
 def find_listing_by_id(id):
+    """
+    Retrieve a pet listing by ID
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: The ID of the pet listing
+    responses:
+      200:
+        description: Details of the pet listing
+      404:
+        description: Listing not found
+    """
     listing_ref = root_ref.child(f'petListings/{id}')
     listing = listing_ref.get()
     
@@ -61,6 +91,21 @@ def find_listing_by_id(id):
 # add applicant
 @app.route("/add/<string:id>", methods=['PUT'])
 def add_applicant(id):
+    """
+    Add an applicant to a pet listing
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: The ID of the pet listing
+    responses:
+      200:
+        description: Success message
+      404:
+        description: Listing not found
+    """
     listings_ref = root_ref.child('petListings')
     document_ref = listings_ref.child(id)
     document = document_ref.get()
@@ -81,6 +126,21 @@ def add_applicant(id):
 # remove applicant
 @app.route("/remove/<string:id>", methods=['PUT'])
 def remove_applicant(id):
+    """
+    Remove an applicant from a pet listing
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: The ID of the pet listing
+    responses:
+      200:
+        description: Success message
+      404:
+        description: Listing not found
+    """
     listings_ref = root_ref.child('petListings')
     document_ref = listings_ref.child(id)
     document = document_ref.get()
