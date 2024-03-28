@@ -5,9 +5,19 @@ from firebase_admin import credentials, db
 from dotenv import load_dotenv
 import os
 
+from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app)
+
+# Initialize flasgger 
+app.config['SWAGGER'] = {
+    'title': 'Adoption microservice API',
+    'version': 1.0,
+    "openapi": "3.0.2",
+    'description': 'Allows create, retrieve, update, of adoption aplication'
+}
+swagger = Swagger(app)
 
 # Load environment variables
 load_dotenv()
@@ -25,6 +35,47 @@ root_ref = db.reference()
 # Push application form to database
 @app.route('/submit_application', methods=['POST'])
 def submit_application():
+    """
+    Submit an adoption application
+    ---
+    tags:
+      - Applications
+    requestBody:
+        description: Application data
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    properties:
+                        userId:
+                            type: string
+                            description: The ID of the user submitting the application
+                        name:
+                            type: string
+                            description: The name of the applicant
+                        email:
+                            type: string
+                            format: email
+                            description: The email of the applicant
+                        phone:
+                            type: string
+                            description: The phone number of the applicant
+                        message:
+                            type: string
+                            description: Additional message from the applicant
+                        pet:
+                            type: string
+                            description: The pet being applied for
+                        petid:
+                            type: string
+                            description: The ID of the pet being applied for
+    responses:
+      201:
+        description: Application submitted successfully
+      400:
+        description: Invalid request data
+    """
     data = request.json
 
     if data is None:
@@ -63,6 +114,17 @@ def submit_application():
 
 @app.route("/adoptionRequests/open")
 def get_all_open_applications():
+    """
+    Get all open adoption applications
+    ---
+    tags:
+      - Applications
+    responses:
+      200:
+        description: A list of all open adoption applications
+      404:
+        description: No open applications found
+    """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
@@ -86,6 +148,17 @@ def get_all_open_applications():
     
 @app.route("/adoptionRequests/pending")
 def get_all_pending_applications():
+    """
+    Get all pending adoption applications
+    ---
+    tags:
+      - Applications
+    responses:
+      200:
+        description: A list of all pending adoption applications
+      404:
+        description: No pending applications found
+    """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
@@ -109,6 +182,17 @@ def get_all_pending_applications():
     
 @app.route("/adoptionRequests/accept")
 def get_all_confirmed_applications():
+    """
+    Get all confirmed adoption applications
+    ---
+    tags:
+      - Applications
+    responses:
+      200:
+        description: A list of all confirmed adoption applications
+      404:
+        description: No confirmed applications found
+    """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
@@ -132,6 +216,17 @@ def get_all_confirmed_applications():
     
 @app.route("/adoptionRequests/reject")
 def get_all_rejected_applications():
+    """
+    Get all rejected adoption applications
+    ---
+    tags:
+      - Applications
+    responses:
+      200:
+        description: A list of all rejected adoption applications
+      404:
+        description: No rejected applications found
+    """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
@@ -156,6 +251,33 @@ def get_all_rejected_applications():
 # Update application status using requestId
 @app.route("/adoptionRequests/<string:id>", methods=['PUT'])
 def update_application_status(id):
+    """
+    Update the status of an adoption application by ID
+    ---
+    tags:
+      - Applications
+    parameters:
+      - name: id
+        in: path
+        required: true
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The new status for the application
+    responses:
+      200:
+        description: Application status updated successfully
+      400:
+        description: Invalid request data
+      404:
+        description: Application not found
+    """
     data = request.json
 
     if 'status' not in data:
@@ -173,6 +295,23 @@ def update_application_status(id):
 # Get all requests by userId
 @app.route("/adoptionRequests/userId/<string:userId>")
 def get_listing_by_userId(userId):
+    """
+    Get all adoption applications by user ID
+    ---
+    tags:
+      - Applications
+    parameters:
+      - name: userId
+        in: path
+        type: string
+        required: true
+        description: The ID of the user
+    responses:
+      200:
+        description: A list of all adoption applications for the specified user
+      404:
+        description: No applications found for the specified user
+    """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
@@ -197,6 +336,23 @@ def get_listing_by_userId(userId):
 # Get all requests by petid
 @app.route("/adoptionRequests/petid/<string:petid>")
 def get_listing_by_petid(petid):
+    """
+    Get all adoption applications by pet ID
+    ---
+    tags:
+      - Applications
+    parameters:
+      - name: petid
+        in: path
+        type: string
+        required: true
+        description: The ID of the pet
+    responses:
+      200:
+        description: A list of all adoption applications for the specified pet
+      404:
+        description: No applications found for the specified pet
+    """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
 
@@ -221,6 +377,23 @@ def get_listing_by_petid(petid):
 # Get request using requestId
 @app.route("/adoptionRequests/<string:id>")
 def find_application_by_id(id):
+    """
+    Get an adoption application by ID
+    ---
+    tags:
+      - Applications
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: The ID of the adoption application
+    responses:
+      200:
+        description: Details of the adoption application
+      404:
+        description: Application not found
+    """
     application_ref = root_ref.child(f'adoptionRequests/{id}')
     application = application_ref.get()
     
