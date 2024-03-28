@@ -30,14 +30,19 @@ def send_notifications(application_data, status):
         subject = "Good news! You're accepted!"
         message = f"Hi {name}. Your application is successful. Please come down to pick up {pet}" 
            
-    else:
+    elif status == 'reject':
         subject = "Adoption request update"
         message = f"Hi {name}. Your application for {pet} is unsuccessful. Thanks for your interest and you may apply for more pets"
+    
+    else:
+        subject = 'Sorry to see you go!'
+        message = f"Hi {name}. This is to confirm that you have cancelled your request for {pet}."
+        
     
     # Reject: batch processing
     body = f"{subject}, {email}, {message}"
     try:
-        channel.basic_publish(exchange=exchangename, routing_key=email+'.'+status, 
+        channel.basic_publish(exchange=exchangename, routing_key=email+f'.{status}', 
                             body=body, properties=pika.BasicProperties(delivery_mode=2))
         return {'status':201, 'message': f'{status} email sent successfully'}
     except AMQPConnectionError as e:
