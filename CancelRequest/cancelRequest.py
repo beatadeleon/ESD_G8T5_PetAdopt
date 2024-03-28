@@ -5,9 +5,10 @@ import os, sys
 
 import requests
 from invokes import invoke_http
-from send_notifications import send_notifications
 app = Flask(__name__)
 CORS(app)
+sys.path.append('../')
+from send_notifications import send_notifications
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
 
