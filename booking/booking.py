@@ -13,10 +13,10 @@ CORS(app, supports_credentials=True)
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
-    'title': 'Book microservice API',
+    'title': 'booking microservice calendly API',
     'version': 1.0,
     "openapi": "3.0.2",
-    'description': 'Allows create, retrieve, update, and delete of books'
+    'description': 'Update Uuid and cancel scheduled booking'
 }
 swagger = Swagger(app)
 
@@ -120,9 +120,6 @@ def process_cancellation():
                         email: 
                             type: string
                             description: User's email
-                        calendlyUuid: 
-                            type: string
-                            description: User's Calendly UUID
     responses:
         200:
             description: Calendly booking cancelled successfully
