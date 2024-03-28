@@ -61,7 +61,7 @@ def createReq(formData):
     
     return jsonify({
         "code": 500,
-        "message": 'Failed to send confirmation email after retries'
+        "message": 'Failed to send confirmation'
     }), 500
         
 def petApplicant(petid):

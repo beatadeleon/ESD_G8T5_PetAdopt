@@ -42,12 +42,21 @@ def cancel_request():
                 json={'email': email}
             )
             print('Cancel booking response:', cancel_booking_response)
+            
+            # Update the pet application number
+            pet_url = 'http://localhost:8082/remove/{}'.format(request_data.get('petid'))
+            pet_applicant_response = invoke_http(
+                pet_url,
+                method='PUT'
+            )
+            print('Update pet applicant number response: ', pet_applicant_response)       
 
             return jsonify({
                 "code": 200,
                 "adoption_response": adoption_response,
                 "notification_response": notification_response,
-                "cancel_booking_response": cancel_booking_response 
+                "cancel_booking_response": cancel_booking_response ,
+                "pet_applicant_response": pet_applicant_response
             }), 200
 
         except Exception as e:
