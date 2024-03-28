@@ -5,11 +5,21 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 import requests
+from dotenv import load_dotenv
 
 from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
+# Load environment variables
+load_dotenv()
+
+databaseURL = os.getenv('DATABASE_URL')
+service_account_path = os.getenv('SERVICE_ACCOUNT_PATH')
+
+cred_obj = firebase_admin.credentials.Certificate(service_account_path)
+default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL': databaseURL})
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
@@ -20,10 +30,6 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
-cred = credentials.Certificate('../petadopt-e0fe8-firebase-adminsdk-l81sh-f8914d3037.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://petadopt-e0fe8-default-rtdb.asia-southeast1.firebasedatabase.app/'
-})
 
 CALENDLY_API_KEY = os.getenv('VUE_APP_CALENDLY_API_KEY')
 CALENDLY_BASE_URL = 'https://api.calendly.com'
