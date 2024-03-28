@@ -181,17 +181,17 @@ def get_all_pending_applications():
         }), 404
     
 @app.route("/adoptionRequests/accept")
-def get_all_confirmed_applications():
+def get_all_accepted_applications():
     """
-    Get all confirmed adoption applications
+    Get all accept adoption applications
     ---
     tags:
       - Applications
     responses:
       200:
-        description: A list of all confirmed adoption applications
+        description: A list of all accepted adoption applications
       404:
-        description: No confirmed applications found
+        description: No accepted applications found
     """
     application_ref = root_ref.child('adoptionRequests')
     applications = application_ref.get()
@@ -206,7 +206,7 @@ def get_all_confirmed_applications():
         else:
             return jsonify({
                 "code": 404,
-                "message": "There are no confirmed applications."
+                "message": "There are no accepted applications."
             }), 404
     else:
         return jsonify({
