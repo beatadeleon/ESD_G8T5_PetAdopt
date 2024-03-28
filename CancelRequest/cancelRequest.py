@@ -17,7 +17,6 @@ adoption_URL = "http://localhost:5110/adoptionRequests/{}"
 def cancel_request():
     # Simple check of input format and data of the request are JSON
 
-    # ehe
     if request.is_json:
         try:
 

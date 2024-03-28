@@ -106,6 +106,25 @@ def process_cancellation():
                             print("Calendly booking cancelled successfully.")
                         else:
                             raise Exception(f"Failed to cancel Calendly booking: {cancel_booking_response.text}")
+                        
+                        return jsonify({
+                            "code": 200,
+                            "message": "Calendly booking cancelled successfully"
+                        }), 200
+                    
+                    else:
+                        print("No Calendly booking found for this user.")
+                        return jsonify({
+                            "code": 200,
+                            "message": "No Calendly booking found for this user."
+                        }), 200
+                    
+                else:
+                    print("User not found.")
+                    return jsonify({
+                        "code": 404,
+                        "message": "User not found."
+                    }), 404
                 
             if not user_data:
                 raise ValueError(f"User with email {email} not found.")
@@ -117,7 +136,7 @@ def process_cancellation():
             print(ex_str)
             return jsonify({"code": 500, "message": f"booking.py internal error: {ex_str}"}), 500
 
-    return jsonify({"code": 400, "message": "Invalid JSON input"}), 400
+    return jsonify({"code": 400, "message": "[booking] Invalid JSON input"}), 400
 
 
 
