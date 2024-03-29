@@ -127,6 +127,9 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
+      adoption_URL: http://adoption:5110/adoptionRequests/{}
+      requests_by_petid_URL: http://adoption:5110/adoptionRequests/petid/{}
+      remove_pet_URL: http://petListings:8082/remove/{}
       PYTHONUNBUFFERED: 1
     ports:
       - "5400:5400"
@@ -149,7 +152,9 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      a_queue_name: Activity_Log
+      adoption_URL: http://adoption:5110/adoptionRequests/{}
+      booking_url: http://booking:5600/process_cancellation
+      pet_url: http://petListings:8082/remove_applicants/{}
       PYTHONUNBUFFERED: 1
     ports:
       - "5100:5100"

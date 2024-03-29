@@ -2,13 +2,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os, sys
 from invokes import invoke_http
-
+from send_notifications import send_notifications
+# For API docs
 from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app)
-sys.path.append('../')
-from send_notifications import send_notifications
+
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
@@ -19,11 +19,12 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
-adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-requests_by_petid_URL = "http://localhost:5110/adoptionRequests/petid/{}"
-remove_pet_URL = "http://localhost:8082/remove/{}"
-@app.route("/accept_request", methods=['POST'])
+# Get env variables
+adoption_URL = os.environ.get("adoption_URL")
+requests_by_petid_URL = os.environ.get("requests_by_petid_URL")
+remove_pet_URL = os.environ.get("remove_pet_URL")
 
+@app.route("/accept_request", methods=['POST'])
 def accept_request():
     """
     Process adoption requests and send notifications.
@@ -67,7 +68,10 @@ def accept_request():
             # Update adoption status
             adoption_response =invoke_http(adoption_URL.format(application_data.get('requestId')), method='PUT', json={"status": new_status})
             print('Adoption response:', adoption_response)
-
+            
+            # Set remove_pet_response as "" so that there'll be no error for pending and else statuses
+            remove_pet_response = ""
+            
             # Determine the notification URL based on the adoption status
             if new_status == 'pending':
                 notification_response = send_notifications(application_data, new_status)
