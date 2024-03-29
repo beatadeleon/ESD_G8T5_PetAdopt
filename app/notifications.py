@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 import amqp_connection
-import json
 import pika
-#from os import environ
+from os import environ
 from send_email import send_email
 
 
 queue_names = ['open', 'pending', 'accept', 'reject', 'cancel']
 
-
-def receiveOrderLog(channel):
+def receiveNotif(channel):
     try:
         for queue_name in queue_names:
             print(f'{queue_name}: Consuming from queue:', queue_name)
@@ -34,6 +32,9 @@ def callback(channel, method, properties, body): # required signature for the ca
 
     
 
-connection = amqp_connection.create_connection()  # get the connection to the broker
-channel = connection.channel()
-receiveOrderLog(channel)
+if __name__ == "__main__": # execute this program only if it is run as a script (not by 'import')    
+    print("notifications microservice: Getting Connection")
+    connection = amqp_connection.create_connection() #get the connection to the broker
+    print("notifications microservice: Connection established successfully")
+    channel = connection.channel()
+    receiveNotif(channel)
