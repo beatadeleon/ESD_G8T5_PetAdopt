@@ -1,16 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
 import os, sys
-
-import requests
 from invokes import invoke_http
+from send_notifications import send_notifications
+# For API docs
+from flasgger import Swagger
+
 app = Flask(__name__)
 CORS(app)
-sys.path.append('../')
-from send_notifications import send_notifications
 
-from flasgger import Swagger
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
@@ -21,8 +19,10 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
-adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-
+# Get env variables
+adoption_URL = os.environ.get("adoption_URL")
+pet_url = os.environ.get("pet_url")
+booking_url = os.environ.get("booking_url")
 
 
 @app.route("/cancel_request", methods=['POST'])
@@ -69,16 +69,15 @@ def cancel_request():
             # Send cancellation request to booking service
             email = request_data.get('email') 
             cancel_booking_response = invoke_http(
-                'http://localhost:5600/process_cancellation',
+                booking_url,
                 method='POST',
                 json={'email': email}
             )
             print('Cancel booking response:', cancel_booking_response)
             
             # Update the pet application number
-            pet_url = 'http://localhost:8082/remove_applicants/{}'.format(request_data.get('petid'))
             pet_applicant_response = invoke_http(
-                pet_url,
+                pet_url.format(request_data.get('petid')),
                 method='PUT'
             )
             print('Update pet applicant number response: ', pet_applicant_response)       

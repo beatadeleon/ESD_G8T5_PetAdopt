@@ -1,14 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os, sys
-import requests
 from invokes import invoke_http
+from send_notifications import send_notifications
+# For API docs
+from flasgger import Swagger
+
 app = Flask(__name__)
 CORS(app)
-sys.path.append('../')
-from send_notifications import send_notifications
-
-from flasgger import Swagger
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
@@ -19,7 +18,9 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
-adoption_url = 'http://localhost:5110/submit_application'
+# Get env variables
+adoption_url = os.environ.get("adoption_url")
+pet_url = os.environ.get("pet_url")
 
 @app.route('/create_application', methods=['POST'])
 def submit_application():
@@ -146,8 +147,7 @@ def petApplicant(petid):
       500:
         description: Failed to update pet's application
     """
-    pet_url = f'http://localhost:8082/add_applicants/{petid}'
-    result = invoke_http(url=pet_url, method='PUT')
+    result = invoke_http(pet_url.format(petid), method='PUT')
     return result
 
         
