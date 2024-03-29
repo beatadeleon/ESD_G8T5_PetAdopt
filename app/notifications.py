@@ -4,6 +4,8 @@ import pika
 from os import environ
 from send_email import send_email
 
+hostname = environ.get('rabbit_host') #localhost
+port = environ.get('rabbit_port')         #5672 
 
 queue_names = ['open', 'pending', 'accept', 'reject', 'cancel']
 
@@ -34,7 +36,7 @@ def callback(channel, method, properties, body): # required signature for the ca
 
 if __name__ == "__main__": # execute this program only if it is run as a script (not by 'import')    
     print("notifications microservice: Getting Connection")
-    connection = amqp_connection.create_connection() #get the connection to the broker
+    connection = amqp_connection.create_connection(hostname, port, max_retries=12, retry_interval=5) #get the connection to the broker
     print("notifications microservice: Connection established successfully")
     channel = connection.channel()
     receiveNotif(channel)
