@@ -3,10 +3,21 @@ from flask_cors import CORS
 import os, sys
 from invokes import invoke_http
 
+from flasgger import Swagger
+
 app = Flask(__name__)
 CORS(app)
 sys.path.append('../')
 from send_notifications import send_notifications
+
+# Initialize flasgger 
+app.config['SWAGGER'] = {
+    'title': 'Accept Request complex microservice',
+    'version': 1.0,
+    "openapi": "3.0.2",
+    'description': 'Invokes adoption and notification microservice'
+}
+swagger = Swagger(app)
 
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
 requests_by_petid_URL = "http://localhost:5110/adoptionRequests/petid/{}"
@@ -14,6 +25,31 @@ remove_pet_URL = "http://localhost:8082/remove/{}"
 @app.route("/accept_request", methods=['POST'])
 
 def accept_request():
+    """
+    Process adoption requests and send notifications.
+    ---
+    requestBody:
+      description: Adoption request data
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              application:
+                type: object
+                description: The adoption application data
+              status:
+                type: string
+                description: The new status for the adoption application
+    responses:
+      200:
+        description: Adoption request processed successfully
+      400:
+        description: Invalid JSON input
+      500:
+        description: Internal server error
+    """
     if request.is_json:
         try:
             # Request is from adminDashboard. Data is in the form of {"application": ..., "status": ...}
@@ -73,6 +109,28 @@ def accept_request():
 
 # Batch rejection
 def notify_rejected_applicants(accepted_requestId, petid, status):
+    """
+    Batch rejection of adoption requests.
+    ---
+    parameters:
+      - name: accepted_requestId
+        in: body
+        description: The ID of the accepted adoption request
+        required: true
+      - name: petid
+        in: body
+        description: The ID of the pet
+        required: true
+      - name: status
+        in: path
+        description: The rejection status
+        required: true
+    responses:
+      201:
+        description: Batch rejection successful
+      500:
+        description: Error in batch rejection
+    """
     pet_applications = invoke_http(requests_by_petid_URL.format(petid))
     reject = True
     for application in pet_applications["data"]:

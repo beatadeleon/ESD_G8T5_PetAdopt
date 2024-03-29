@@ -12,7 +12,7 @@ CORS(app)
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
-    'title': 'Pet listings API',
+    'title': 'Pet Listing microservice API',
     'version': 1.0,
     "openapi": "3.0.2",
     'description': 'Retrieves pet listings, add applicant to a pet listing, remove applicant from a pet listing, remove a pet listing once adopted'

@@ -8,10 +8,62 @@ CORS(app)
 sys.path.append('../')
 from send_notifications import send_notifications
 
+from flasgger import Swagger
+
+# Initialize flasgger 
+app.config['SWAGGER'] = {
+    'title': 'Manage Request complex microservice',
+    'version': 1.0,
+    "openapi": "3.0.2",
+    'description': 'Invokes petListing, adoption and notification microservice'
+}
+swagger = Swagger(app)
+
 adoption_url = 'http://localhost:5110/submit_application'
 
 @app.route('/create_application', methods=['POST'])
 def submit_application():
+    """
+    Submit an adoption application and send notifications.
+    ---
+    requestBody:
+      description: Adoption application data
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+                description: The ID of the user submitting the application
+              name:
+                type: string
+                description: The name of the applicant
+              email:
+                type: string
+                format: email
+                description: The email of the applicant
+              phone:
+                type: string
+                description: The phone number of the applicant
+              message:
+                type: string
+                description: Additional message from the applicant
+              pet:
+                type: string
+                description: The pet being applied for
+              petid:
+                type: string
+                description: The ID of the pet being applied for
+    responses:
+      200:
+        description: Application submitted successfully
+      400:
+        description: Invalid JSON input
+      500:
+        description: Internal server error
+    """
     if request.is_json:
         try:
             formData = request.get_json()
@@ -38,6 +90,21 @@ def submit_application():
     }), 400
                 
 def createReq(formData):
+    """
+    Process the adoption application, send notifications, and update pet's application.
+    ---
+    parameters:
+      - name: formData
+        in: body
+        description: Adoption application data
+        required: true
+    responses:
+      201:
+        description: Application processed successfully
+      500:
+        description: Failed to send confirmation
+    """
+    
     # POST request to Adoption service
     print('----Sending formData to adoption service-----')
     adoption_result = invoke_http(url=adoption_url, method='POST', json=formData)
@@ -65,6 +132,20 @@ def createReq(formData):
     }), 500
         
 def petApplicant(petid):
+    """
+    Update pet's application.
+    ---
+    parameters:
+      - name: petid
+        in: body
+        description: The ID of the pet
+        required: true
+    responses:
+      200:
+        description: Pet's application updated successfully
+      500:
+        description: Failed to update pet's application
+    """
     pet_url = f'http://localhost:8082/add_applicants/{petid}'
     result = invoke_http(url=pet_url, method='PUT')
     return result
