@@ -105,6 +105,8 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
+      adoption_url: http://adoption:5110/submit_application
+      pet_url: http://petListings:8082/add_applicants/{}
       PYTHONUNBUFFERED: 1
     ports:
       - "5300:5300"
