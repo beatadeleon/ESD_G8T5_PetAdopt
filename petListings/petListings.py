@@ -49,7 +49,7 @@ def get_all_listings():
         return jsonify({
             "code": 200, 
             "data": listings_data
-        })
+        }), 200
     else:
         return jsonify({
             "code": 404, 
@@ -81,7 +81,7 @@ def find_listing_by_id(id):
         return jsonify({
             "code": 200, 
             "data": listing
-        })
+        }), 200
     else:
         return jsonify({
             "code": 404, 
@@ -115,6 +115,7 @@ def add_applicant(id):
         new_applicants = document.get('applicants', 0) + 1
         document_ref.update({'applicants': new_applicants})
         return jsonify({
+              'code': 200,
             'message': f'ADD success. New applicant number for {id}: {new_applicants}'
         }), 200
     except Exception as e:
@@ -149,11 +150,12 @@ def remove_applicant(id):
     try:
         if document.get('applicants') == 0:
             return jsonify({'code': 400,
-                            'message': f'CANNOT remove. Applicant number for {id} is already 0. '})
+                            'message': f'CANNOT remove. Applicant number for {id} is already 0. '}), 400
         else:
             new_applicants = document.get('applicants', 0) - 1
             document_ref.update({'applicants': new_applicants})
             return jsonify({
+                'code': 200,
                 'message': f'REMOVE success. New applicant number for {id}: {new_applicants}'
             }), 200
     except Exception as e:
@@ -183,6 +185,7 @@ def remove_pet(id):
     try:
         document_ref.delete()
         return jsonify({
+            'code': 200,
             'message': f'Successfully removed pet {id}!'
         }), 200
         
