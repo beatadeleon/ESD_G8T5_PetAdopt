@@ -98,10 +98,10 @@ services:
     image: beasdeleon/manage_request:esd_g8t5
     restart: always
     depends_on:
-      - rabbitmq
       - adoption
+      - rabbitmq
       - petListings
-      # - notifications
+      - notifications
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
