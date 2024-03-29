@@ -10,14 +10,46 @@ CORS(app)
 sys.path.append('../')
 from send_notifications import send_notifications
 
+from flasgger import Swagger
+
+# Initialize flasgger 
+app.config['SWAGGER'] = {
+    'title': 'Cancel Request complex microservice',
+    'version': 1.0,
+    "openapi": "3.0.2",
+    'description': 'Invokes adoption, booking and notification microservice'
+}
+swagger = Swagger(app)
+
 adoption_URL = "http://localhost:5110/adoptionRequests/{}"
 
 
 
 @app.route("/cancel_request", methods=['POST'])
 def cancel_request():
+    """
+    Cancel an adoption request, send notifications, and update pet's application.
+    ---
+    requestBody:
+      description: Adoption request data
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              requestId:
+                type: object
+                description: The adoption request data (nested object)
+    responses:
+      200:
+        description: Adoption request canceled successfully
+      400:
+        description: Invalid JSON input
+      500:
+        description: Internal server error
+    """
     # Simple check of input format and data of the request are JSON
-
     if request.is_json:
         try:
 

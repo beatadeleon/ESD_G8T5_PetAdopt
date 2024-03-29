@@ -23,7 +23,7 @@ default_app = firebase_admin.initialize_app(cred_obj, {'databaseURL': databaseUR
 
 # Initialize flasgger 
 app.config['SWAGGER'] = {
-    'title': 'booking microservice calendly API',
+    'title': 'Booking microservice calendly API',
     'version': 1.0,
     "openapi": "3.0.2",
     'description': 'Update Uuid and cancel scheduled booking'
