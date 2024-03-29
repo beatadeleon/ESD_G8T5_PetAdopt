@@ -44,7 +44,7 @@ def send_notifications(application_data, status):
     try:
         channel.basic_publish(exchange=exchangename, routing_key=email+f'.{status}', 
                             body=body, properties=pika.BasicProperties(delivery_mode=2))
-        return {'status':201, 'message': f'{status} email sent successfully'}
+        return {'code':201, 'message': f'{status} email sent successfully'}
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
     
