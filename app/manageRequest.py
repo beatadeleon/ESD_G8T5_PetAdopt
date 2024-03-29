@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os, sys
 import requests
-# from invokes import invoke_http
+from invokes import invoke_http
 app = Flask(__name__)
 CORS(app)
 sys.path.append('../')
@@ -40,16 +40,16 @@ def submit_application():
 def createReq(formData):
     # POST request to Adoption service
     print('----Sending formData to adoption service-----')
-    adoption_result = requests.post(url=adoption_url, json=formData)
+    adoption_result = invoke_http(url=adoption_url, method='POST', json=formData)
     print(adoption_result)
     
     # If adoption_result is (200,300), send confirmation email
-    if adoption_result.status_code in range(200, 300):
+    if adoption_result['code'] in range(200, 300):
             print('----Sending confirmation email to notification service -------')
             notification_result = send_notifications(formData, 'open')
             print(notification_result)
                     
-    if notification_result['status'] == 201:
+    if notification_result['code'] == 201:
             # Update the pet's application
             pet_result = petApplicant(formData["petid"])
             print(pet_result)
@@ -66,9 +66,7 @@ def createReq(formData):
         
 def petApplicant(petid):
     pet_url = f'http://localhost:8082/add_applicants/{petid}'
-    result = requests.put(url=pet_url)
-    print(result.status_code)
-    print(result.text) 
+    result = invoke_http(url=pet_url, method='PUT')
     return result
 
         
