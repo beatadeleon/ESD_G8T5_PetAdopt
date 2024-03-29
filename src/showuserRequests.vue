@@ -14,7 +14,7 @@ import { auth } from './firebaseConfig';
           <p>Status: {{ request.status }}</p>
           <!-- Add more details as needed -->
           <button v-if="request.status !== 'cancel' && request.status !== 'accept'" @click="cancelRequest(request)">Cancel Request</button>
-          <router-link to="/booking" v-if="request.status === 'pending'">Book</router-link>
+          <router-link to="/booking" v-if="request.status === 'pending'" class="button-link">Book</router-link>
 
 
         </div>
@@ -97,5 +97,18 @@ import { auth } from './firebaseConfig';
     padding: 10px;
     margin-bottom: 10px;
   }
+  .button-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button-link:hover {
+  background-color: #0056b3;
+}
   </style>
   
