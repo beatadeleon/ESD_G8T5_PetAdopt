@@ -17,7 +17,7 @@ def send_email(receiver_email, subject, message):
 
     # Create a MIMEText object for the email content
     msg = MIMEMultipart()
-    msg['From'] = sender_email
+    msg['From'] = "PetAdopt Admin"
     msg['To'] = receiver_email
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
