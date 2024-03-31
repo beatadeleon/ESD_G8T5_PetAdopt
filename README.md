@@ -8,6 +8,7 @@ A web application for pet adoption using microservices architecture.
 
 # Accounts to use
 For admin:
+
   -Email: admin@gmail.com
   
   -Password: 12345!
