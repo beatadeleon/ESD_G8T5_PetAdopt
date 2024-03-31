@@ -16,4 +16,4 @@ For admin:
 You must register as a new user to test out the user-facing features and use a workable email to get the notifications.
 
 # Notes:
-You will need to use the **SAME EMAIL** that you used to **REGISTER** on Pet Adopt when <u>applying to adopt</u> and <u>booking an appointment on Calendly. (booking page)</u>
+You will need to use the **SAME EMAIL** that you used to **REGISTER** on Pet Adopt when __applying to adopt__and __booking an appointment on Calendly. (booking page)__
