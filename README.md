@@ -9,5 +9,7 @@ A web application for pet adoption using microservices architecture.
 # Accounts to use
 For admin:
   -Email: admin@gmail.com
+  
   -Password: 12345!
+  
 You must register as a new user to test out the user-facing features, and ensure to use a workable email to get the notifications.
