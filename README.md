@@ -13,4 +13,7 @@ For admin:
   
   -Password: 12345!
   
-You must register as a new user to test out the user-facing features, and ensure to use a workable email to get the notifications.
+You must register as a new user to test out the user-facing features and use a workable email to get the notifications.
+
+# Notes:
+You will need to use the **SAME EMAIL** that you used to **REGISTER** on Pet Adopt.
