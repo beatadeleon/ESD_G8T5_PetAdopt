@@ -35,7 +35,7 @@ const filteredStatus = ref('');
 
 const fetchApplications = async (status) => {
   try {
-    const response = await fetch(`http://localhost:5110/adoptionRequests/${status}`);
+    const response = await fetch(`http://localhost:8000/adoption/adoptionRequests/${status}`);
     if (response.ok) {
       const data = await response.json();
       applications.value = data.data || [];
@@ -61,7 +61,7 @@ const filterApplications = (status) => {
 
 const updateStatus = async (application, status) => {
   try {
-    const response = await fetch(`http://localhost:5400/accept_request`, {
+    const response = await fetch(`http://localhost:8000/manageRequest/accept_request`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

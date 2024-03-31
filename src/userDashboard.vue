@@ -30,7 +30,7 @@ const petData = ref([]);
 // Fetch pet listings data from the microservice
 async function fetchPetListings() {
   try {
-    const response = await fetch('http://localhost:8082/petListings');
+    const response = await fetch('http://localhost:8000/petListings/petListings');
     if (!response.ok) {
       throw new Error('Failed to fetch pet listings');
     }

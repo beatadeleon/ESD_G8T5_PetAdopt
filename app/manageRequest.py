@@ -19,7 +19,7 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
-adoption_url = 'http://localhost:5110/submit_application'
+adoption_url = 'http://localhost:8000/adoption/submit_application'
 
 @app.route('/create_application', methods=['POST'])
 def submit_application():

@@ -1,10 +1,96 @@
 version: "3.8"
 
 volumes:
+  pgdata: # volume for postgres data
   rabbitmq_data:
 
+# Creates a single network named kong-net using the default bridge driver
+networks:
+  kong-net:
+    driver: bridge
+    name: kong-net
+
 services:
+
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:15 # tested 20231101; Ref: https://docs.konghq.com/gateway/latest/support/third-party/
+    platform: linux/amd64  # <- required for Mac M1 chip. Otherwise, can remove
+    restart: always
+    networks: # attach this network to the container
+      - kong-net 
+    environment: # set environment variables
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck: # check if the container is healthy - to be ready to accept requests
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong/kong-gateway:3.2.2.5 # tested 20231101
+    platform: linux/amd64  # <- required for Mac M1 chip. Otherwise, can remove
+    command: "kong migrations bootstrap" # execute database migrations
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong/kong-gateway:3.2.2.5 # tested 20231101
+    platform: linux/amd64  # <- required for Mac M1 chip. Otherwise, can remove
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+    depends_on:
+      - kong-migration
+    ports: # https://docs.konghq.com/gateway/latest/production/networking/default-ports/
+      - "8000:8000" # Takes incoming HTTP traffic from Consumers, and forwards it to upstream Services.
+      - "8443:8443" # Takes incoming HTTPS traffic from Consumers, and forwards it to upstream Services.
+      - "8001:8001" # Admin API. Listens for calls from the command line over HTTP.
+      - "8444:8444" # Admin API. Listens for calls from the command line over HTTPS.
+      - "8002:8002" # Kong Manager (GUI). Listens for HTTP traffic.
+      - "8445:8445" # Kong Manager (GUI). Listens for HTTPS traffic.
+      - "8003:8003" # Dev Portal. Listens for HTTP traffic, assuming Dev Portal is enabled.
+      - "8446:8446" # Dev Portal. Listens for HTTP traffic, assuming Dev Portal is enabled.
+      - "8004:8004" # Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.
+      - "8447:8447" # Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.
  
+
   ###################################
   # adoption microservice
   ###################################
@@ -20,6 +106,23 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5110:5110"
+    networks:
+      - kong-net
+
+  adoption2:
+    build:
+      context: ./
+      dockerfile: adoption.Dockerfile
+    image: beasdeleon/adoption:esd_g8t5
+    restart: always
+    environment:
+      DATABASE_URL: "https://petadopt-e0fe8-default-rtdb.asia-southeast1.firebasedatabase.app/"
+      SERVICE_ACCOUNT_PATH: "./petadopt-e0fe8-firebase-adminsdk-l81sh-f8914d3037.json"
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5111:5110"
+    networks:
+      - kong-net
 
  
   # #######################################################
@@ -37,6 +140,23 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "8082:8082"
+    networks:
+      - kong-net
+
+  petListings2:
+    build:
+      context: ./
+      dockerfile: petListings.Dockerfile
+    image: beasdeleon/pet_listings:esd_g8t5
+    restart: always
+    environment:
+      DATABASE_URL: "https://petadopt-e0fe8-default-rtdb.asia-southeast1.firebasedatabase.app/"
+      SERVICE_ACCOUNT_PATH: "./petadopt-e0fe8-firebase-adminsdk-l81sh-f8914d3037.json"
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8083:8082"
+    networks:
+      - kong-net
 
 
   # #######################################################
@@ -54,6 +174,24 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5600:5600"
+    networks:
+      - kong-net
+
+  booking2:
+    build:
+      context: ./
+      dockerfile: booking.Dockerfile
+    image: beasdeleon/booking:esd_g8t5
+    restart: always
+    environment:
+      DATABASE_URL: "https://petadopt-e0fe8-default-rtdb.asia-southeast1.firebasedatabase.app/"
+      SERVICE_ACCOUNT_PATH: "./petadopt-e0fe8-firebase-adminsdk-l81sh-f8914d3037.json"
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5601:5600"
+    networks:
+      - kong-net
+
 
   # ####################################
   # # RabbitMQ: The messaging broker   
@@ -69,6 +207,8 @@ services:
       - ./rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq_definitions.json:/etc/rabbitmq/rabbitmq_definitions.json
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - kong-net
       
 
   # ###################################
@@ -86,6 +226,8 @@ services:
       rabbit_host: rabbitmq
       rabbit_port: 5672
       PYTHONUNBUFFERED: 1
+    networks:
+      - kong-net
 
 
   # #################################################
@@ -108,6 +250,30 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5300:5300"
+    networks:
+      - kong-net
+
+  manageRequest2:
+    build:
+      context: ./
+      dockerfile: manageRequest.Dockerfile
+    image: beasdeleon/manage_request:esd_g8t5
+    restart: always
+    depends_on:
+      - adoption
+      - rabbitmq
+      - petListings
+      - notifications
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5301:5300"
+    networks:
+      - kong-net
+
+
   # #################################################
   # # accept request complex microservice
   # #################################################
@@ -128,6 +294,28 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5400:5400"
+    networks:
+      - kong-net
+
+  acceptRequest2:
+    build:
+      context: ./
+      dockerfile: acceptRequest.Dockerfile
+    image: beasdeleon/accept_request:esd_g8t5
+    restart: always
+    depends_on:
+      - rabbitmq
+      - adoption
+      - petListings
+      - notifications
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5401:5400"
+    networks:
+      - kong-net
   
   # #################################################
   # # cancel request complex microservice
@@ -151,5 +339,27 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5100:5100"
+    networks:
+      - kong-net
 
- 
+  cancelRequest2:
+    build:
+      context: ./
+      dockerfile: cancelRequest.Dockerfile
+    image: beasdeleon/cancel_request:esd_g8t5
+    restart: always
+    depends_on:
+      - rabbitmq
+      - adoption
+      - petListings
+      - booking
+      - notifications
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      a_queue_name: Activity_Log
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5101:5100"
+    networks:
+      - kong-net

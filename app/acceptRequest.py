@@ -19,9 +19,9 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 
-adoption_URL = "http://localhost:5110/adoptionRequests/{}"
-requests_by_petid_URL = "http://localhost:5110/adoptionRequests/petid/{}"
-remove_pet_URL = "http://localhost:8082/remove/{}"
+adoption_URL = "http://localhost:8000/adoption/adoptionRequests/{}"
+requests_by_petid_URL = "http://localhost:8000/adoption/adoptionRequests/petid/{}"
+remove_pet_URL = "http://localhost:8000/petListings/remove/{}"
 @app.route("/accept_request", methods=['POST'])
 
 def accept_request():
