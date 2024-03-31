@@ -1,0 +1,59 @@
+<!--
+  This software is copyright Kong Inc. and its licensors.
+  Use of the software is subject to the agreement between your organization
+  and Kong Inc. If there is no such agreement, use is governed by and
+  subject to the terms of the Kong Master Software License Agreement found
+  at https://konghq.com/enterprisesoftwarelicense/.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>self["MonacoEnvironment"] = (function (paths) {
+          return {
+            globalAPI: false,
+            getWorkerUrl : function (moduleId, label) {
+              var result =  paths[label];
+              if (/^((http:)|(https:)|(file:)|(\/\/))/.test(result)) {
+                var currentUrl = String(window.location);
+                var currentOrigin = currentUrl.substr(0, currentUrl.length - window.location.hash.length - window.location.search.length - window.location.pathname.length);
+                if (result.substring(0, currentOrigin.length) !== currentOrigin) {
+                  var js = '/*' + label + '*/importScripts("' + result + '");';
+                  var blob = new Blob([js], { type: 'application/javascript' });
+                  return URL.createObjectURL(blob);
+                }
+              }
+              return result;
+            }
+          };
+        })({
+  "editorWorkerService": "/monacoeditorwork/editor.worker.bundle.js",
+  "css": "/monacoeditorwork/css.worker.bundle.js",
+  "html": "/monacoeditorwork/html.worker.bundle.js",
+  "json": "/monacoeditorwork/json.worker.bundle.js",
+  "typescript": "/monacoeditorwork/ts.worker.bundle.js",
+  "javascript": "/monacoeditorwork/ts.worker.bundle.js",
+  "less": "/monacoeditorwork/css.worker.bundle.js",
+  "scss": "/monacoeditorwork/css.worker.bundle.js",
+  "handlebars": "/monacoeditorwork/html.worker.bundle.js",
+  "razor": "/monacoeditorwork/html.worker.bundle.js"
+});</script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
+    <title>Kong Admin</title>
+
+    <script type="text/javascript" src="/kconfig.js"></script>
+    <script type="text/javascript">global = globalThis</script>
+      <script type="module" crossorigin src="/assets/index.e25b4626.js"></script>
+      <link rel="modulepreload" crossorigin href="/assets/monaco-editor.a13f5e9a.js">
+      <link rel="stylesheet" href="/assets/monaco-editor.8c7b9059.css">
+      <link rel="stylesheet" href="/assets/index.c411e06e.css">
+    </head>
+  <body>
+    <div id="app-mount"></div>
+    <!-- built files will be auto injected -->
+    
+</body>
+</html>
