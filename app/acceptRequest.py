@@ -20,9 +20,13 @@ app.config['SWAGGER'] = {
 swagger = Swagger(app)
 
 # Get env variables
-adoption_URL = os.environ.get("adoption_URL")
-requests_by_petid_URL = os.environ.get("requests_by_petid_URL")
-remove_pet_URL = os.environ.get("remove_pet_URL")
+adoption_URL = "http://localhost:8000/adoption/adoptionRequests/{}"
+requests_by_petid_URL = "http://localhost:8000/adoption/adoptionRequests/petid/{}"
+remove_pet_URL = "http://localhost:8000/petListings/remove/{}"
+
+# adoption_URL = os.environ.get("adoption_URL")
+# requests_by_petid_URL = os.environ.get("requests_by_petid_URL")
+# remove_pet_URL = os.environ.get("remove_pet_URL")
 
 @app.route("/accept_request", methods=['POST'])
 def accept_request():

@@ -20,10 +20,13 @@ app.config['SWAGGER'] = {
 swagger = Swagger(app)
 
 # Get env variables
-adoption_URL = os.environ.get("adoption_URL")
-pet_url = os.environ.get("pet_url")
-booking_url = os.environ.get("booking_url")
+adoption_URL = "http://localhost:8000/adoption/adoptionRequests/{}"
+pet_url = "http://localhost:8000/petListings/remove_applicants/{}"
+booking_url = "http://localhost:8000/booking/process_cancellation"
 
+# adoption_URL = os.environ.get("adoption_URL")
+# pet_url = os.environ.get("pet_url")
+# booking_url = os.environ.get("booking_url")
 
 @app.route("/cancel_request", methods=['POST'])
 def cancel_request():
