@@ -124,7 +124,8 @@ def createReq(formData):
             if pet_result:
                 return jsonify({
                     "code":201,
-                    "message": 'Application processed successfully'
+                    "message": 'Application processed successfully',
+                    "data": formData
                 }), 201
     
     return jsonify({
