@@ -42,7 +42,27 @@
       },
       "listing5": {
         "name": "Stinky",
-        "type": "Racoon",
+        "type": "Dog",
+        "age": 4,
+        "gender": "Male",
+        "breed": "Racoon",
+        "description": "Stinky is a sticky and lovable racoon who enjoys eating trash.",
+        "image": "https://i.pinimg.com/564x/17/60/61/1760615841b11edd46368731f1eeb2a0.jpg",
+        "applicants": 0
+      },
+      "listing6": {
+        "name": "Huahua",
+        "type": "Dog",
+        "age": 4,
+        "gender": "Male",
+        "breed": "Chihuahua",
+        "description": "Huahua is a loving and friendly dog. He's looking for a home with a furry companion!",
+        "image": "https://i.pinimg.com/564x/a2/ee/73/a2ee73e72b230f89dfd764692053141f.jpg",
+        "applicants": 0
+      },
+      "listing8": {
+        "name": "Oogway",
+        "type": "Terrapin",
         "age": 4,
         "gender": "Male",
         "breed": "Racoon",

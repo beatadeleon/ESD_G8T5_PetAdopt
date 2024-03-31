@@ -41,6 +41,8 @@ console.log(user)
           <button>Admin Dashboard</button>
         </router-link>
       </p>
+      <!-- Logout button -->
+      <button @click="logout">Logout</button>
     </div>
     
     
@@ -98,8 +100,19 @@ console.log(user)
       }
     });
   },
+  logout() {
+        firebaseAuth.signOut().then(() => {
+          // Sign-out successful.
+          // Redirect or perform any other actions after logout
+          router.push('/auth/login');
+        }).catch((error) => {
+          // An error happened.
+          console.error("Error logging out:", error);
+        });
+      },
+    }
 }
 
 
-}
+
 </script>

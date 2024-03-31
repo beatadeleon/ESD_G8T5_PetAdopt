@@ -11,9 +11,10 @@ import { auth } from './firebaseConfig';
           <h2>{{ request.pet }}</h2>
           <p>Name: {{ request.name }}</p>
           <p>Email: {{ request.email }}</p>
+          <p>Message: {{request.message}}</p>
           <p>Status: {{ request.status }}</p>
           <!-- Add more details as needed -->
-          <button v-if="request.status !== 'cancel' && request.status !== 'accept'" @click="cancelRequest(request)">Cancel Request</button>
+          <button v-if="request.status =='pending' || request.status == 'open'" @click="cancelRequest(request)" class="cancel-button">Cancel Request</button>
           <router-link to="/booking" v-if="request.status === 'pending'" class="button-link">Book</router-link>
 
 
@@ -100,7 +101,18 @@ import { auth } from './firebaseConfig';
   .button-link {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: rgb(74, 213, 109);
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+  .cancel-button {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 10px 20px;
+  background-color: rgb(228, 62, 98);
   color: #fff;
   text-decoration: none;
   border: none;
@@ -108,7 +120,10 @@ import { auth } from './firebaseConfig';
   cursor: pointer;
 }
 .button-link:hover {
-  background-color: #0056b3;
+  background-color: rgb(7, 186, 51);
+}
+.cancel-button:hover {
+  background-color: rgb(232, 4, 4);
 }
   </style>
   

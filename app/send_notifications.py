@@ -3,7 +3,10 @@ from pika.exceptions import AMQPConnectionError
 import os
 
 exchangename = "notifications" 
-exchangetype = "topic" 
+exchangetype = "topic"
+
+hostname = os.environ.get('rabbit_host')
+port = os.environ.get('rabbit_port')
 
 def send_notifications(application_data, status):    
     email = application_data['email']
@@ -31,7 +34,7 @@ def send_notifications(application_data, status):
         message = f"Hi {name}. This is to confirm that you have cancelled your request for {pet}."
 
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(hostname, port))
         channel = connection.channel()
         channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype, durable=True)
         
@@ -40,6 +43,6 @@ def send_notifications(application_data, status):
                                body=body, properties=pika.BasicProperties(delivery_mode=2))
         connection.close()
         
-        return {'status': 201, 'message': f'{status} email sent successfully'}
+        return {'code': 201, 'message': f'{status} email sent successfully'}
     except AMQPConnectionError as e:
         return "Failed to publish accept message due to connection error", str(e)
