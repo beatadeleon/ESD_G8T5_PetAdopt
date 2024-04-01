@@ -111,7 +111,7 @@ def createReq(formData):
     
     # POST request to Adoption service
     print('----Sending formData to adoption service-----')
-    adoption_result = invoke_http(url=adoption_url, method='POST', json=formData)
+    adoption_result = invoke_http(url=adoption_URL, method='POST', json=formData)
     print(adoption_result)
     
     # If adoption_result is (200,300), send confirmation email
