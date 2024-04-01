@@ -18,8 +18,3 @@ For admin:
   
 You must register as a new user to test out the user-facing features and use a workable email to get the notifications.
 
-=======
-# ESD G8T5 - Pet Adoption System
-
-An enterprise pet adoption system, where users can adopt pets and admins manage the adoption requests.
->>>>>>> parent of 79ea3925 (lessgoooo)
