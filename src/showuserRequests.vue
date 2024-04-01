@@ -41,7 +41,7 @@ import { auth } from './firebaseConfig';
           throw new Error('No user logged in');
         }
         const userId = currentUser.uid;
-        const response = await fetch(`http://localhost:8000/adoption/adoptionRequests/userId/${userId}`);
+        const response = await fetch(`http://localhost:5110/adoptionRequests/userId/${userId}`);
         if (!response.ok) {
           throw new Error('No adoption requests found.');
         }
@@ -63,7 +63,7 @@ import { auth } from './firebaseConfig';
         try {
           const currentUser = auth.currentUser;
 
-          const response = await fetch('http://localhost:8000/cancelRequest/cancel_request', {
+          const response = await fetch('http://localhost:5100/cancel_request', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

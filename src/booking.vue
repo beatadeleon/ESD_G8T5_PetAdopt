@@ -56,7 +56,7 @@ export default {
           })
           .then(data => {
             const userEmail = data.resource.email;
-            fetch('http://localhost:8000/booking/update_calendly_uuid', {
+            fetch('http://localhost:5600/update_calendly_uuid', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'

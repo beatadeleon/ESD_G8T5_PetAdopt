@@ -20,9 +20,9 @@ app.config['SWAGGER'] = {
 swagger = Swagger(app)
 
 # Get env variables
-adoption_URL = "http://localhost:8000/adoption/adoptionRequests/{}"
-pet_url = "http://localhost:8000/petListings/remove_applicants/{}"
-booking_url = "http://localhost:8000/booking/process_cancellation"
+adoption_URL = "http://localhost:5110/adoptionRequests/{}"
+pet_url = "http://localhost:8082/remove_applicants/{}"
+booking_url = "http://localhost:5600/process_cancellation"
 
 # adoption_URL = os.environ.get("adoption_URL")
 # pet_url = os.environ.get("pet_url")

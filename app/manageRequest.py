@@ -19,8 +19,8 @@ app.config['SWAGGER'] = {
 swagger = Swagger(app)
 
 # Get env variables
-adoption_URL = "http://localhost:8000/adoption/adoptionRequests/{}"
-pet_url = "http://localhost:8000/petListings/remove_applicants/{}"
+adoption_URL = "http://localhost:5110/adoptionRequests/{}"
+pet_url = "http://localhost:8082/remove_applicants/{}"
 
 # adoption_url = os.environ.get("adoption_url")
 # pet_url = os.environ.get("pet_url")
